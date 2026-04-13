@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="https://www.acwapower.com/images/favicon.png">
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Operations Roster 2026</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  
+  <style>
+    :root { --brand-lilac:#9273DA; --brand-dark:#2E1A47; --brand-lime:#D2F050; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1b2940; margin: 0; padding: 0; }
+    
+    /* ── NEW HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--brand-dark) 0%, #4a2b75 50%, var(--brand-lilac) 100%);
+      padding: 120px 20px 80px 20px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    /* Pulls the white content cards up over the banner slightly */
+    .overlap-content { margin-top: -40px; position: relative; z-index: 10; }
+
+    /* ── TRANSPARENT-TO-SOLID NAVBAR ── */
+    .acwa-navbar { 
+      background-color: transparent !important; 
+      padding: 20px 0; 
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000; 
+      transition: padding 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease; 
+    }
+    .acwa-navbar.scrolled { 
+      padding: 8px 0; 
+      background-color: rgba(46, 26, 71, 0.95) !important; 
+      backdrop-filter: blur(12px); 
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3); 
+    }
+    .navbar-brand svg { height: 46px; width: auto; transition: height 0.4s ease; }
+    .acwa-navbar.scrolled .navbar-brand svg { height: 36px; }
+    
+    @media (min-width: 992px) {
+      .navbar-expand-lg .navbar-collapse { display: flex !important; visibility: visible !important; flex-basis: auto; }
+      .navbar-toggler { display: none !important; }
+    }
+    
+    /* ── CARDS & BADGES ── */
+    .sap-card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column;}
+    .sap-card-top { height: 5px; width: 100%; flex-shrink: 0;}
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 999px; }
+    .badge-sap      { background-color: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
+    .badge-planned  { background-color: #e0f2fe; color: #0288d1; border: 1px dashed #0288d1; }
+    .badge-conflict { background-color: #fee2e2; color: #b91c1c; }
+    
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+    dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+    
+    .crew-red         { color: #d32f2f; font-weight: 800; }
+    .crew-yellow      { color: #f9a825; font-weight: 800; }
+    .crew-green       { color: #2e7d32; font-weight: 800; }
+    .crew-lightblue   { color: #0288d1; font-weight: 800; }
+    .crew-lightviolet { color: #7b1fa2; font-weight: 800; }
+    .crew-lightorange { color: #ef6c00; font-weight: 800; }
+    .crew-grey        { color: #616161; font-weight: 800; }
+    
+    /* ── TOAST & MAGIC WAND ── */
+    #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: #2e7d32; }
+    #toast.error   { background: #b91c1c; }
+    #toast.saving  { background: #0288d1; }
+    @keyframes magical-glow { 0% { box-shadow: 0 0 5px #9273DA; } 50% { box-shadow: 0 0 30px #9273DA, 0 0 50px #D2F050; } 100% { box-shadow: 0 0 5px #9273DA; } }
+    .magic-resolving { animation: magical-glow 1.5s ease-in-out; }
+
+    /* ── ULTIMATE LOCKED TIMELINE (FROZEN PANES) ── */
+    .timeline-container-wrapper { 
+        overflow: auto; /* Enables both X and Y scrolling */
+        max-height: 65vh; /* Locks the box height so the slicer scrollbar is always visible */
+        max-width: 100%; 
+        border: 1px solid #e5e7eb; 
+        border-radius: 12px; 
+        background: white; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.04); 
+        position: relative;
+    }
+    .timeline-grid-interactive { display: inline-grid; grid-template-columns: 200px repeat(365, 28px); gap: 0; }
+    
+    /* The Magic Sticky Elements */
+    .timeline-header-corner { 
+        position: sticky; top: 0; left: 0; z-index: 50; /* Highest z-index */
+        background: #f8fafc; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; 
+        display: flex; align-items: center; padding-left: 1rem; font-weight: 700; color: #4b5563; font-size: 0.85rem; 
+    }
+    .timeline-header-date { 
+        position: sticky; top: 0; z-index: 40; 
+        font-size: 0.65rem; text-align: center; color: #6b7280; font-weight: bold; padding: 4px 0; 
+        border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f3f4f6; background: #f8fafc; 
+    }
+    .timeline-name-col { 
+        position: sticky; left: 0; z-index: 30; 
+        background: white; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #f3f4f6; 
+        padding: 4px 12px; cursor: pointer; transition: background 0.2s; 
+    }
+    .timeline-name-col:hover { background: #f8fafc; }
+    
+    .timeline-cell { 
+        height: 100%; border-right: 1px solid #ffffff; border-bottom: 1px solid #f3f4f6; 
+        transition: transform 0.1s, filter 0.1s; position: relative; cursor: crosshair; z-index: 1;
+    }
+    .timeline-cell:hover { transform: scale(1.4); filter: brightness(0.85); z-index: 20; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .timeline-cell[title]:hover::after { 
+        content: attr(title); position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%); 
+        background-color: #1f2937; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+    }
+    
+    @media(max-width:991px){
+      .navbar-collapse { background:rgba(46,34,53,.98); padding:1rem; border-radius:0 0 12px 12px; position:absolute; top:100%; left:0; right:0; box-shadow:0 10px 25px rgba(0,0,0,.5); z-index:1050; }
+      .nav-actions { flex-direction:column; align-items:stretch; margin-left:0; padding-top:10px; border-top:1px solid rgba(255,255,255,.1); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg acwa-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <div style="display:flex;align-items:center;">
+        <svg viewBox="0 0 65 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.0233 49.9211L36.3917 7.3999C37.9717 4.69273 40.2552 2.21894 41.7544 1.81053V1.49547H28.192C24.2479 1.49547 22.1259 2.84905 19.5195 7.3999L5.09216 32.6863C2.48578 37.2371 2.01294 39.4659 3.43146 43.1415L9.02479 57.3425H9.33617C9.02479 55.6622 10.4433 52.64 12.0117 49.9211H12.0233Z"/>
+          <path d="M53.6666 49.9215C55.2466 52.6287 56.6651 55.6626 56.3422 57.3429H56.6536L62.3277 43.1419C63.8269 39.4662 63.0427 36.7591 60.667 32.6867L58.222 28.4625C55.6157 23.9117 53.4937 22.5581 49.5495 22.5581H35.9064V22.8732C37.4056 23.2699 39.6891 25.7437 41.2691 28.4625L53.6436 49.9215H53.6666Z"/>
+          <path d="M56.9318 6.12801C56.5973 5.83629 56.3205 5.83629 55.9745 6.12801L51.0847 10.3288C50.5196 10.8072 50.2082 11.1689 49.943 11.6707H49.8738V7.08485C49.8738 6.44307 50.139 5.84795 50.6349 5.42788L54.3946 2.20728C55.8823 0.923707 57.0356 0.912038 58.5463 2.20728L62.306 5.42788C62.7903 5.84795 63.0671 6.4314 63.0671 7.08485V11.6707H62.9979C62.7327 11.1689 62.4213 10.8072 61.8562 10.3288L56.9664 6.13968L56.9318 6.12801Z"/>
+        </svg>
+        <span style="font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:white;margin-left:14px;padding-left:14px;border-left:2px solid rgba(255,255,255,0.2);letter-spacing:1px;">OPERATIONS</span>
+      </div>
+    </a>
+    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+        <li class="nav-item nav-actions flex gap-3">
+          <button id="cal-nav-btn" class="inline-flex items-center justify-center gap-2 px-5 py-2 text-[13px] font-bold text-white bg-[#9273DA] hover:bg-[#7b5dc2] rounded-full transition-all duration-200 border-none cursor-pointer shadow hover:shadow-md" type="button" onclick="toggleView()">
+            &#9654; View Timeline
+          </button>
+          <button type="button" class="inline-flex items-center justify-center gap-2 px-5 py-2 text-[13px] font-bold text-[#2E2044] bg-[#D2F050] hover:bg-[#c0df45] rounded-full transition-all duration-200 border-none cursor-pointer shadow hover:shadow-md" onclick="exportToExcel()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export Excel
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="hero-banner">
+  <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Operations Dashboard</h1>
+  <p class="text-lg md:text-xl font-medium opacity-90">Leave Planning & Live Conflict Management 2026</p>
+</div>
+
+<div id="toast"></div>
+
+<div class="max-w-screen-2xl mx-auto px-4 sm:px-6 overlap-content">
+  
+  <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow border border-gray-200" id="header-container">
+    <div>
+      <h2 class="text-xl font-extrabold text-gray-800">System Status</h2>
+      <p class="text-sm font-bold text-gray-500 mt-0.5" id="conflict-banner">Loading Database...</p>
+    </div>
+  </div>
+  
+  <div id="card-view" class="space-y-10"></div>
+  
+  <div id="timeline-view" class="hidden pb-8">
+    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-3 flex flex-wrap gap-4 items-center">
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFF2CC;"></div> Day Shift</span>
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#DDEBF7;"></div> Night Shift</span>
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded border border-gray-300" style="background:#f3f4f6;"></div> Off</span>
+        <div class="w-px h-5 bg-gray-300 mx-1"></div>
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFFF00;"></div> Planned Leave</span>
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#C4B5FD;"></div> SAP Leave</span>
+        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#EF4444;"></div> Conflict</span>
+    </div>
+    
+    <div class="timeline-container-wrapper custom-scrollbar">
+        <div id="timeline-container"></div>
+    </div>
+  </div>
+</div>
+
+<dialog id="edit-modal" class="p-0 rounded-2xl shadow-2xl border-0 w-full max-w-md">
+  <div class="p-6 bg-white">
+    <h2 class="text-xl font-extrabold mb-4 text-gray-800" id="modal-title">Edit Leaves</h2>
+    <input type="hidden" id="edit-id">
+    
+    <div class="space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-100 mb-4">
+      <div class="grid grid-cols-3 gap-2">
+        <div class="col-span-2">
+          <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Employee Name</label>
+          <input type="text" id="edit-name" disabled class="mt-1 block w-full rounded-md bg-gray-100 text-gray-600 font-bold shadow-none p-2 border-transparent cursor-not-allowed text-sm">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Emp ID</label>
+          <input type="text" id="edit-empid" disabled class="mt-1 block w-full rounded-md bg-gray-100 text-gray-600 font-bold shadow-none p-2 border-transparent cursor-not-allowed text-center text-sm">
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Role & Crew</label>
+        <input type="text" id="edit-role" disabled class="mt-1 block w-full rounded-md bg-gray-100 text-gray-600 font-bold shadow-none p-2 border-transparent cursor-not-allowed text-sm">
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="border-t pt-4 border-gray-200">
+        <p class="text-[11px] font-bold text-[#9273DA] uppercase tracking-wider mb-2">Add New Leave</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600">Start Date</label>
+            <input type="date" id="edit-start" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-1.5 text-sm border focus:ring-[#9273DA] focus:border-[#9273DA]" oninput="checkModalConflicts()">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600">End Date</label>
+            <input type="date" id="edit-end" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-1.5 text-sm border focus:ring-[#9273DA] focus:border-[#9273DA]" oninput="checkModalConflicts()">
+          </div>
+        </div>
+        <p id="edit-conflict-warning" class="text-[11px] mt-1 text-red-600 font-bold"></p>
+        <div>
+          <label class="block text-[11px] font-bold text-gray-600">Leave Type</label>
+          <select id="edit-type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-1.5 text-sm border focus:ring-[#9273DA] focus:border-[#9273DA]">
+            <option value="Applied on SAP">Applied on SAP</option>
+            <option value="Planned">Planned</option>
+          </select>
+        </div>
+      </div>
+      <div id="existing-leaves-list" class="space-y-2 mt-4 max-h-32 overflow-y-auto pr-2 custom-scrollbar"></div>
+    </div>
+    <div class="mt-6 flex justify-end space-x-2">
+      <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+      <button type="button" onclick="savePerson()" class="px-4 py-2 bg-[#9273DA] text-white text-sm font-bold rounded-lg hover:bg-[#7b5dc2] shadow-sm transition">&#10003; Save Changes</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+<script>
+  // ── NAVBAR SCROLL LOGIC ──
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.acwa-navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  // ── 1. LOCAL DATABASE & INITIALIZATION ──
+  const initialDB = {
+    "roster": [
+      { "id": 1, "name": "Izhar Ali", "empId": "500440", "crew": "C", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-04-21", "end": "2026-05-02", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 2, "name": "Purushothaman", "empId": "500438", "crew": "A", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-04-27", "end": "2026-05-07", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 3, "name": "Juma Khan", "empId": "2028", "crew": "C", "role": "CCR Operator", "color": "crew-green", "leaves": [{ "start": "2026-04-29", "end": "2026-05-14", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 4, "name": "Mustafa Salem", "empId": "2024", "crew": "D", "role": "Shift in Charge Engineer", "color": "crew-red", "leaves": [{ "start": "2026-05-19", "end": "2026-06-19", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 5, "name": "Ahmed Alsaqoor", "empId": "3973", "crew": "D", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-05-19", "end": "2026-06-11", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 6, "name": "Syed Shahnawaz Ahmed", "empId": "2025", "crew": "A", "role": "Supervisor", "color": "crew-red", "leaves": [{ "start": "2026-05-20", "end": "2026-06-04", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 7, "name": "Abdul Hameed", "empId": "1119", "crew": "General", "role": "Supervisor", "color": "crew-grey", "leaves": [{ "start": "2026-05-20", "end": "2026-06-10", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 8, "name": "Waleed Fayad", "empId": "501388", "crew": "C", "role": "CCR Operator", "color": "crew-green", "leaves": [{ "start": "2026-05-31", "end": "2026-06-23", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 9, "name": "Mark Ramirez", "empId": "2237", "crew": "D", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-05-31", "end": "2026-06-15", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 10, "name": "Ahmed Fathy", "empId": "2726", "crew": "A", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [{ "start": "2026-06-06", "end": "2026-06-14", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 11, "name": "Moustafa Elansari", "empId": "2038", "crew": "C", "role": "Supervisor", "color": "crew-red", "leaves": [{ "start": "2026-06-16", "end": "2026-06-28", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 12, "name": "Veera Prasad", "empId": "2294", "crew": "D", "role": "CCR Operator", "color": "crew-green", "leaves": [{ "start": "2026-07-06", "end": "2026-08-06", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 13, "name": "Lakshmy Prasad", "empId": "501234", "crew": "D", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [{ "start": "2026-07-14", "end": "2026-08-10", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 14, "name": "Prathapan", "empId": "3672", "crew": "B", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [{ "start": "2026-07-22", "end": "2026-08-18", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 15, "name": "Zaid Almarri", "empId": "502667", "crew": "A", "role": "Shift in Charge", "color": "crew-red", "leaves": [{ "start": "2026-08-01", "end": "2026-08-15", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 16, "name": "Sami Hamdan", "empId": "2364", "crew": "A", "role": "CCR Operator", "color": "crew-yellow", "leaves": [{ "start": "2026-09-01", "end": "2026-09-15", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 17, "name": "Fawaz Al Qahtani", "empId": "2954", "crew": "A", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [{ "start": "2026-09-16", "end": "2026-09-30", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 18, "name": "Abdulwahab Al-Shehab", "empId": "2202", "crew": "A", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-10-01", "end": "2026-10-15", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 19, "name": "Shaheer Yousaf", "empId": "2711", "crew": "A", "role": "CCR Operator", "color": "crew-green", "leaves": [{ "start": "2026-10-16", "end": "2026-10-30", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 20, "name": "Mohamed Al Dossary", "empId": "3865", "crew": "A", "role": "Local Operator", "color": "crew-lightorange", "leaves": [{ "start": "2026-11-01", "end": "2026-11-15", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 21, "name": "Abdullah Altulayhi", "empId": "501369", "crew": "A", "role": "Local Operator", "color": "crew-lightorange", "leaves": [{ "start": "2026-11-16", "end": "2026-11-30", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 22, "name": "Bakr Abdulmajeed", "empId": "3617", "crew": "A", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 23, "name": "Saad Salem Al Hajiri", "empId": "4101", "crew": "A", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 24, "name": "Abdulhadi Mohammed Saleh", "empId": "4095", "crew": "A", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 25, "name": "Abdullah Al Amri", "empId": "2363", "crew": "B", "role": "Shift in Charge", "color": "crew-red", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 26, "name": "Kanaka Naga Srinivasu Kolli", "empId": "500446", "crew": "B", "role": "Supervisor", "color": "crew-red", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 27, "name": "Ahmed Fawaz", "empId": "N/A", "crew": "B", "role": "CCR Operator", "color": "crew-grey", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 28, "name": "Rashed Alhajri", "empId": "2369", "crew": "B", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 29, "name": "Saravanakumar Madhaiyan", "empId": "2035", "crew": "B", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 30, "name": "Abdullah Mohiddin Alshahrani", "empId": "3251", "crew": "B", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 31, "name": "Mohammed Mulhim", "empId": "3262", "crew": "B", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 32, "name": "Mohammed Afnan", "empId": "500439", "crew": "B", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-05-25", "end": "2026-06-05", "type": "Planned" }], "conflict": false, "conflictWith": [] },
+      { "id": 33, "name": "Abdelaziz Al Harbi", "empId": "3511", "crew": "C", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 34, "name": "Amjad Alruwaytie", "empId": "4091", "crew": "B", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 35, "name": "Abderahman Al Anezie", "empId": "4098", "crew": "B", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 36, "name": "Alaa Alrefae", "empId": "502680", "crew": "C", "role": "Shift in Charge", "color": "crew-red", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 37, "name": "Abdullah Al Hajri", "empId": "2665", "crew": "C", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 38, "name": "Yasser Althuiqeb", "empId": "501370", "crew": "C", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 39, "name": "Norbie Cruz", "empId": "2283", "crew": "C", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-05-07", "end": "2026-06-14", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
+      { "id": 40, "name": "Khalid Saleh Khalousi", "empId": "501885", "crew": "C", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 41, "name": "Saad Al Enize", "empId": "3229", "crew": "C", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 42, "name": "Abderahman Al Baqmi", "empId": "4096", "crew": "C", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 43, "name": "Ali Al Qahtani", "empId": "4108", "crew": "C", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 44, "name": "Saleh Mohammed Al Amri", "empId": "2941", "crew": "D", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 45, "name": "Hassan Arshad", "empId": "2512", "crew": "D", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 46, "name": "Rajesh Muniasamy", "empId": "2492", "crew": "D", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 47, "name": "Mohammed Al Ghamdi", "empId": "2820", "crew": "D", "role": "Local Operator", "color": "crew-green", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 48, "name": "Bader AlSubait", "empId": "2912", "crew": "D", "role": "Local Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 49, "name": "Faris Al Dawasri", "empId": "4097", "crew": "D", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 50, "name": "Mohamed Al Hakami", "empId": "4081", "crew": "D", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 51, "name": "Saad Al Shahrani", "empId": "4094", "crew": "D", "role": "Filed Operator", "color": "crew-lightorange", "leaves": [], "conflict": false, "conflictWith": [] },
+      { "id": 52, "name": "Mohammad Algarni", "empId": "3142", "crew": "General", "role": "CCR Operator", "color": "crew-lightblue", "leaves": [{ "start": "2026-04-17", "end": "2026-05-12", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] }
+    ]
+  };
+
+  let roster = [];
+  let viewMode = 'card';
+
+  function loadData() {
+    const saved = localStorage.getItem('qipp_roster_data');
+    if (saved) {
+        roster = JSON.parse(saved);
+        showToast('Loaded saved data!', 'success');
+    } else {
+        roster = JSON.parse(JSON.stringify(initialDB.roster));
+        showToast('Loaded default database.', 'success');
+    }
+    renderAll();
+  }
+
+  function saveData() {
+    localStorage.setItem('qipp_roster_data', JSON.stringify(roster));
+    showToast('Changes Saved!', 'success');
+  }
+
+  // ── GLOBALS & MAPS ──
+  const crewOrder = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'General': 5 };
+  const roleOrder = { 'Shift in Charge Engineer': 1, 'Shift in Charge': 1, 'Supervisor': 2, 'CCR Operator': 3, 'Local Operator': 4, 'Filed Operator': 5, 'Field Operator': 5 };
+
+  const crewColorMap = {
+    'crew-red':'d32f2f','crew-yellow':'f9a825','crew-green':'2e7d32',
+    'crew-lightblue':'0288d1','crew-lightviolet':'7b1fa2',
+    'crew-lightorange':'ef6c00','crew-grey':'616161'
+  };
+
+  const shiftCycles = {
+      'A': ['O', 'O', 'O', 'O', 'D', 'D', 'N', 'N'],
+      'B': ['D', 'D', 'N', 'N', 'O', 'O', 'O', 'O'],
+      'C': ['N', 'N', 'O', 'O', 'O', 'O', 'D', 'D'],
+      'D': ['O', 'O', 'D', 'D', 'N', 'N', 'O', 'O'],
+      'General': ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  };
+
+  function getDaysSinceBase(dateStr) {
+      const base = new Date('2026-01-01T00:00:00Z');
+      const current = new Date(dateStr + 'T00:00:00Z');
+      return Math.floor((current - base) / (1000 * 60 * 60 * 24));
+  }
+
+  // ── UI HELPERS ──
+  function showToast(msg, type='success', duration=2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.className = '', duration);
+  }
+
+  function formatNoYear(d) {
+    if (!d) return '';
+    const p = d.split('-');
+    if (p.length === 3) return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1],10)-1] + ' ' + parseInt(p[2],10);
+    return d;
+  }
+
+  function getInitials(name) { return name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase(); }
+
+  // ── CONFLICTS ──
+  function calculateConflicts() {
+    roster.forEach(p => { p.conflict = false; p.conflictWith = []; });
+    let count = 0;
+    for (let i = 0; i < roster.length; i++) {
+      for (let j = i+1; j < roster.length; j++) {
+        const p1 = roster[i], p2 = roster[j];
+        if (p1.crew !== p2.crew || p1.role !== p2.role) continue;
+        let hit = false;
+        p1.leaves.forEach(l1 => p2.leaves.forEach(l2 => {
+          if (new Date(l1.start) <= new Date(l2.end) && new Date(l2.start) <= new Date(l1.end)) hit = true;
+        }));
+        if (hit) {
+          p1.conflict = p2.conflict = true;
+          if (!p1.conflictWith.includes(p2.name)) p1.conflictWith.push(p2.name);
+          if (!p2.conflictWith.includes(p1.name)) p2.conflictWith.push(p1.name);
+        }
+      }
+    }
+    roster.forEach(p => { if (p.conflict) count++; });
+    document.getElementById('conflict-banner').innerHTML = count > 0
+      ? `<span class="text-red-600 font-bold">${count} schedule conflicts detected.</span>`
+      : `<span class="text-green-600 font-bold">No conflicts detected. All systems green.</span>`;
+  }
+
+  function unlockAutoScheduler() {
+      document.querySelectorAll('.suggest-btn').forEach(b => b.style.display = 'inline-block');
+      showToast('Admin Mode: Auto-Scheduler Unlocked!', 'success');
+      document.getElementById('header-container').classList.add('magic-resolving');
+      setTimeout(()=> document.getElementById('header-container').classList.remove('magic-resolving'), 1500);
+  }
+
+  function suggestLeave(personId) {
+    const target = roster.find(x => x.id === personId);
+    if (!target) return;
+    const peers = roster.filter(x => x.id !== personId && x.crew === target.crew && x.role === target.role);
+    let badDates = new Set();
+    peers.forEach(peer => peer.leaves.forEach(lv => {
+        let s = new Date(lv.start).getTime(), e = new Date(lv.end).getTime();
+        for (let d = s; d <= e; d += 86400000) badDates.add(d);
+    }));
+    let startSearch = new Date('2026-04-01').getTime(), endSearch = new Date('2026-12-15').getTime(), bestStart = null;
+    for (let d = startSearch; d <= endSearch; d += 86400000) {
+      let hasConflict = false;
+      for (let i = 0; i < 14; i++) {
+        if (badDates.has(d + (i * 86400000))) { hasConflict = true; break; }
+      }
+      if (!hasConflict) { bestStart = d; break; }
+    }
+    if (bestStart) {
+      handleEditPerson(personId);
+      setTimeout(() => {
+        document.getElementById('edit-start').value = new Date(bestStart).toISOString().split('T')[0];
+        document.getElementById('edit-end').value   = new Date(bestStart + (13 * 86400000)).toISOString().split('T')[0];
+        checkModalConflicts();
+        showToast('Found optimal 14-day window!', 'success');
+      }, 50);
+    } else {
+      alert(`No clear 14-day window found for Crew ${target.crew} ${target.role}s in 2026.`);
+    }
+  }
+
+  // ── RENDER ──
+  function renderAll() { calculateConflicts(); renderCards(); renderTimeline(); }
+
+  function toggleView() {
+    const btn = document.getElementById('cal-nav-btn');
+    viewMode = viewMode === 'card' ? 'timeline' : 'card';
+    btn.innerHTML = viewMode === 'card' ? '&#9654; View Timeline' : '&#8592; Back to Cards';
+    document.getElementById('card-view').style.display     = viewMode === 'card'     ? 'block' : 'none';
+    document.getElementById('timeline-view').style.display = viewMode === 'timeline' ? 'block' : 'none';
+  }
+
+  function renderCards() {
+    const container = document.getElementById('card-view');
+    container.innerHTML = '';
+    
+    const sortedForCards = [...roster].sort((a, b) => {
+        if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
+        return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+    });
+
+    ['A','B','C','D','General'].forEach(crew => {
+      const members = sortedForCards.filter(p => p.crew === crew);
+      if (!members.length) return;
+      const section = document.createElement('div');
+      section.className = "mb-8";
+      // COMPACT GRID
+      section.innerHTML = `<h2 class="text-xl font-extrabold mb-3 text-gray-800 border-b-2 border-gray-100 pb-2">Crew ${crew}</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3"></div>`;
+      const grid = section.querySelector('div');
+      
+      members.forEach(p => {
+        const hex = crewColorMap[p.color] || '000';
+        const conflictBadge = p.conflict ? `<span class="badge badge-conflict absolute top-2 right-2 shadow-sm text-[10px]">⚠️ Conflict</span>` : '';
+        const leavesHtml = p.leaves.map(l => `
+          <div class="bg-gray-50 rounded-md p-2 text-[10px] mb-1.5 border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+              <span class="badge ${l.type==='Applied on SAP'?'badge-sap':'badge-planned'} text-[9px] py-0.5 px-1.5">${l.type}</span>
+              <span class="text-gray-400 font-mono font-bold">${Math.ceil((new Date(l.end)-new Date(l.start))/86400000)}d</span>
+            </div>
+            <div class="flex justify-between font-medium">
+              <span class="text-gray-500">${formatNoYear(l.start)}</span>
+              <span class="text-gray-300">&rarr;</span>
+              <span class="text-gray-800">${formatNoYear(l.end)}</span>
+            </div>
+          </div>`).join('');
+        
+        const isAlgarni = p.name.toLowerCase().includes('algarni');
+        const secretTrigger = isAlgarni ? `ondblclick="unlockAutoScheduler()"` : '';
+        const cursorClass   = isAlgarni ? 'cursor-pointer ring-4 ring-[#9273DA]' : ''; 
+
+        grid.innerHTML += `
+          <div class="sap-card transition hover:shadow-md">
+            <div class="sap-card-top" style="background-color:#${hex}"></div>
+            ${conflictBadge}
+            <div class="p-3 pt-4 relative flex-grow flex flex-col">
+              <div class="flex items-center space-x-3 mb-2">
+                <div ${secretTrigger} class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm ${cursorClass} transition shadow-inner" style="background-color:#${hex}" title="${isAlgarni ? 'Double click for Admin Tools' : ''}">${getInitials(p.name)}</div>
+                <div class="overflow-hidden">
+                  <h3 class="font-extrabold text-sm leading-tight truncate" style="color:#${hex}" title="${p.name}">${p.name}</h3>
+                  <p class="text-[10px] font-bold text-gray-500 mt-0.5 truncate" title="${p.role}">${p.role}</p>
+                  <p class="text-[9px] text-gray-400 font-mono font-bold mt-0.5">ID: ${p.empId || 'N/A'}</p>
+                </div>
+              </div>
+              <div class="max-h-24 overflow-y-auto pr-1 mt-1 custom-scrollbar flex-grow">
+                ${leavesHtml}
+              </div>
+              <div class="flex justify-end mt-2 pt-2 border-t border-gray-100">
+                <button onclick="suggestLeave(${p.id})" class="suggest-btn text-gray-400 hover:text-[#9273DA] transition mr-2 text-sm" style="display:none;" title="Auto-Suggest Best Dates">✨</button>
+                <button onclick="handleEditPerson(${p.id})" class="text-gray-400 hover:text-blue-600 transition font-bold text-[10px] bg-gray-50 px-2.5 py-1 rounded border border-gray-200 hover:bg-blue-50" title="Edit">&#9998; Edit Leaves</button>
+              </div>
+            </div>
+          </div>`;
+      });
+      container.appendChild(section);
+    });
+  }
+
+  // ULTIMATE FROZEN TIMELINE 
+  function renderTimeline() {
+    const container = document.getElementById('timeline-container');
+    let html = `<div class="timeline-grid-interactive"><div class="timeline-header-corner">EMPLOYEE</div>`; 
+    
+    let startDate = new Date("2026-01-01T00:00:00Z");
+    const dates = [];
+
+    // Header Row (365 days)
+    for(let i=0; i<365; i++) {
+        let d = new Date(startDate);
+        d.setUTCDate(d.getUTCDate() + i);
+        dates.push(d);
+        html += `<div class="timeline-header-date">${d.getUTCDate()}<br><span class="font-normal opacity-70">${d.toLocaleDateString('en-US', {weekday:'narrow', timeZone:'UTC'})}</span></div>`;
+    }
+
+    const uiSortedRoster = [...roster].sort((a, b) => {
+        if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
+        return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+    });
+
+    uiSortedRoster.forEach(person => {
+        const hex = crewColorMap[person.color] || '000';
+        
+        const nameHover = person.conflict ? `title="⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')}"` : `title="${person.name}"`;
+        
+        html += `<div class="timeline-name-col" onclick="handleEditPerson(${person.id})" ${nameHover}>
+            <div class="text-[11px] font-extrabold truncate" style="color:#${hex};">${person.conflict ? '⚠️' : ''} ${person.name}</div>
+            <div class="text-[9px] font-bold text-gray-400">Crew ${person.crew}</div>
+        </div>`;
+        
+        const cycle = shiftCycles[person.crew] || shiftCycles['General'];
+
+        // Cells Row
+        dates.forEach(date => {
+            const dateStr = date.toISOString().slice(0, 10);
+            const diffInDays = getDaysSinceBase(dateStr);
+            const shift = cycle[((diffInDays % 8) + 8) % 8];
+
+            let cellColor = shift === 'D' ? '#FFF2CC' : (shift === 'N' ? '#DDEBF7' : '#F3F4F6');
+            let hoverText = `Shift: ${shift}`;
+            let extraClass = '';
+
+            person.leaves.forEach(lv => {
+                if (dateStr >= lv.start && dateStr <= lv.end) {
+                    cellColor = lv.type === 'Applied on SAP' ? '#C4B5FD' : '#FFFF00'; // Light Violet
+                    hoverText = `Leave: ${lv.type}`;
+                    
+                    if (person.conflict) {
+                        extraClass = 'ring-2 ring-red-600 animate-pulse'; 
+                        hoverText = `⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')} | ${lv.type}`;
+                        cellColor = '#EF4444'; // Bright Red
+                    }
+                }
+            });
+
+            // TEXT REMOVED FROM INSIDE CELL
+            html += `<div class="timeline-cell ${extraClass}" style="background-color: ${cellColor};" title="${dateStr} | ${hoverText}"></div>`;
+        });
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  // ── MODAL ──
+  function checkModalConflicts() {
+    const start = document.getElementById('edit-start').value;
+    const end   = document.getElementById('edit-end').value;
+    const idVal = document.getElementById('edit-id').value;
+    const warn  = document.getElementById('edit-conflict-warning');
+    
+    // We fetch the crew/role straight from the person, not the disabled inputs
+    const person = roster.find(x => String(x.id) === String(idVal));
+    if (!start||!end||!person) { warn.textContent=''; return; }
+    
+    const sN = new Date(start), eN = new Date(end);
+    const hits = [];
+    roster.forEach(p => {
+      if (idVal && String(p.id)===String(idVal)) return;
+      if (p.crew===person.crew && p.role===person.role)
+        p.leaves.forEach(l => { if (sN<=new Date(l.end) && new Date(l.start)<=eN) hits.push(p.name); });
+    });
+    warn.innerHTML = hits.length ? '⚠️ <b>WARNING:</b> Dates conflict with ' + [...new Set(hits)].join(', ') : '';
+  }
+
+  function handleEditPerson(id) {
+      const p = roster.find(x => x.id === id);
+      if (!p) return;
+      
+      document.getElementById('edit-id').value    = p.id;
+      document.getElementById('edit-name').value  = p.name;
+      document.getElementById('edit-empid').value = p.empId || 'N/A';
+      document.getElementById('edit-role').value  = p.role + ' (Crew ' + p.crew + ')';
+      
+      document.getElementById('edit-start').value = '';
+      document.getElementById('edit-end').value   = '';
+      document.getElementById('edit-conflict-warning').textContent = '';
+      
+      document.getElementById('existing-leaves-list').innerHTML = p.leaves.map((l,i) => `
+        <div class="flex justify-between items-center bg-white p-2.5 rounded-md border border-gray-200 text-[11px] font-bold shadow-sm">
+          <span>${formatNoYear(l.start)} &rarr; ${formatNoYear(l.end)} <span class="text-gray-400 ml-1 font-normal">(${l.type})</span></span>
+          <button onclick="removeLeave(${p.id},${i})" class="text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition">Remove</button>
+        </div>`).join('');
+        
+      document.getElementById('edit-modal').showModal();
+  }
+
+  function removeLeave(personId, idx) {
+    const p = roster.find(x => x.id===personId);
+    if (p && confirm('Delete this leave period?')) {
+      p.leaves.splice(idx,1);
+      saveData();
+      handleEditPerson(personId);
+      renderAll();
+    }
+  }
+
+  function savePerson() {
+    const idVal = document.getElementById('edit-id').value;
+    const start = document.getElementById('edit-start').value;
+    const end   = document.getElementById('edit-end').value;
+    
+    const newLeave = (start&&end) ? {start, end, type: document.getElementById('edit-type').value} : null;
+    
+    if (idVal) {
+      const i = roster.findIndex(p => String(p.id) === String(idVal));
+      if (i !== -1) {
+        if (newLeave) {
+          roster[i].leaves.push(newLeave);
+          roster[i].leaves.sort((a,b) => new Date(a.start)-new Date(b.start));
+        }
+      }
+    }
+    
+    saveData(); 
+    closeModal();
+    renderAll();
+  }
+
+  function closeModal() { document.getElementById('edit-modal').close(); }
+
+  // ── DYNAMIC EXCEL EXPORTER ─────────
+  async function exportToExcel() {
+    try {
+        showToast('Generating 2026 & 2027 Excel Dashboards...', 'saving', 5000);
+        const workbook = new ExcelJS.Workbook();
+
+        const sortedRoster = [...roster].sort((a, b) => {
+            if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
+            return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+        });
+
+        const borderStyle = { style: 'thin', color: { argb: 'FFD9D9D9' } };
+        const gridBorder = { top: borderStyle, left: borderStyle, bottom: borderStyle, right: borderStyle };
+        
+        const fills = {
+            header: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE7E6E6' } },
+            weekend: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } },
+            day: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF2CC' } },
+            night: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } },
+            sap: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC4B5FD' } }, 
+            plan: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } }
+        };
+
+        const fonts = {
+            day: { bold: true, color: { argb: 'FFD6B656' } },
+            night: { bold: true, color: { argb: 'FF6C8EBF' } },
+            black: { bold: true, color: { argb: 'FF000000' } }
+        };
+
+        const nameColors = {
+            'crew-red': 'FFFF0000', 'crew-yellow': 'FFD4AF37', 'crew-green': 'FF00B050',
+            'crew-lightblue': 'FF0070C0', 'crew-lightviolet': 'FF7030A0', 'crew-lightorange': 'FFED7D31',
+            'crew-grey': 'FF808080'
+        };
+
+        function buildSheet(year) {
+            const ws = workbook.addWorksheet(`${year} Roster`, {
+                views: [{ state: 'frozen', xSplit: 4, ySplit: 4 }] 
+            });
+
+            ws.columns = [{ width: 14 }, { width: 35 }, { width: 14 }, { width: 25 }];
+            
+            ws.mergeCells('A1:D1');
+            const titleCell = ws.getCell('A1');
+            titleCell.value = `${year} OPERATIONS & LEAVE ROSTER`;
+            titleCell.font = { size: 14, bold: true };
+            titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+            const legend = [
+                { range: 'E1:F1', text: ' S = SAP', fill: fills.sap },
+                { range: 'H1:I1', text: ' P = Plan', fill: fills.plan },
+                { range: 'K1:M1', text: ' D = Day Shift', fill: fills.day },
+                { range: 'O1:R1', text: ' N = Night Shift', fill: fills.night }
+            ];
+
+            legend.forEach(item => {
+                ws.mergeCells(item.range);
+                const cell = ws.getCell(item.range.split(':')[0]);
+                cell.value = item.text;
+                cell.fill = item.fill;
+                cell.font = fonts.black;
+                cell.border = gridBorder;
+                cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            });
+
+            const headerTitles = ["Emp ID", "Full Name", "Crew", "Role"];
+            headerTitles.forEach((text, i) => {
+                ws.mergeCells(3, i + 1, 4, i + 1);
+                const cell = ws.getCell(3, i + 1);
+                cell.value = text;
+                cell.font = fonts.black;
+                cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                cell.fill = fills.header;
+                cell.border = gridBorder;
+            });
+
+            const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            const monthDays = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            let colIdx = 5;
+            const dateToCol = {};
+
+            months.forEach((mName, mIdx) => {
+                const daysInMonth = monthDays[mIdx];
+                
+                ws.mergeCells(2, colIdx, 2, colIdx + daysInMonth - 1);
+                const mCell = ws.getCell(2, colIdx);
+                mCell.value = mName;
+                mCell.font = fonts.black;
+                mCell.alignment = { horizontal: 'center', vertical: 'middle' };
+                mCell.fill = fills.header;
+                mCell.border = gridBorder;
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const currentCol = colIdx + d - 1;
+                    ws.getColumn(currentCol).width = 3.5;
+
+                    const dateStr = `${year}-${String(mIdx+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                    dateToCol[dateStr] = currentCol;
+
+                    const dCell = ws.getCell(3, currentCol);
+                    dCell.value = d;
+                    dCell.alignment = { horizontal: 'center' };
+                    dCell.border = gridBorder;
+
+                    const currentDate = new Date(dateStr + 'T00:00:00Z');
+                    const dayOfWeek = currentDate.getUTCDay();
+
+                    const dowCell = ws.getCell(4, currentCol);
+                    dowCell.value = currentDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' })[0];
+                    dowCell.alignment = { horizontal: 'center' };
+                    dowCell.font = { size: 8, color: { argb: 'FF595959' } };
+                    dowCell.border = gridBorder;
+
+                    if (dayOfWeek === 5 || dayOfWeek === 6) {
+                        dCell.fill = fills.weekend;
+                        dowCell.fill = fills.weekend;
+                    }
+                }
+                colIdx += daysInMonth;
+            });
+
+            let rowNum = 5;
+            sortedRoster.forEach(person => {
+                const cycle = shiftCycles[person.crew] || shiftCycles['General'];
+                
+                ws.getCell(rowNum, 1).value = person.empId;
+                ws.getCell(rowNum, 1).alignment = { horizontal: 'center', vertical: 'middle' };
+                ws.getCell(rowNum, 1).border = gridBorder;
+
+                ws.getCell(rowNum, 2).value = person.name;
+                ws.getCell(rowNum, 2).alignment = { vertical: 'middle' };
+                ws.getCell(rowNum, 2).border = gridBorder;
+                ws.getCell(rowNum, 2).font = { bold: true, color: { argb: nameColors[person.color] || 'FF000000' } };
+
+                ws.getCell(rowNum, 3).value = person.crew === 'General' ? 'General' : `Crew ${person.crew}`;
+                ws.getCell(rowNum, 3).alignment = { horizontal: 'center', vertical: 'middle' };
+                ws.getCell(rowNum, 3).border = gridBorder;
+
+                ws.getCell(rowNum, 4).value = person.role;
+                ws.getCell(rowNum, 4).alignment = { horizontal: 'center', vertical: 'middle' };
+                ws.getCell(rowNum, 4).border = gridBorder;
+
+                let dayCount = 0;
+                for (let m = 0; m < 12; m++) {
+                    for (let d = 1; d <= monthDays[m]; d++) {
+                        const dateStr = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                        const diffInDays = getDaysSinceBase(dateStr);
+                        
+                        const shift = cycle[((diffInDays % 8) + 8) % 8]; 
+                        const c = 5 + dayCount;
+                        const cell = ws.getCell(rowNum, c);
+
+                        const currentDate = new Date(dateStr + 'T00:00:00Z');
+                        const isWeekend = currentDate.getUTCDay() === 5 || currentDate.getUTCDay() === 6;
+
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                        cell.border = gridBorder;
+
+                        if (shift === 'D') {
+                            cell.value = 'D'; cell.fill = fills.day; cell.font = fonts.day;
+                        } else if (shift === 'N') {
+                            cell.value = 'N'; cell.fill = fills.night; cell.font = fonts.night;
+                        } else if (isWeekend) {
+                            cell.fill = fills.weekend;
+                        }
+                        dayCount++;
+                    }
+                }
+
+                if (person.leaves) {
+                    person.leaves.forEach(lv => {
+                        if (lv.start.startsWith(String(year)) || lv.end.startsWith(String(year))) {
+                            let cur = new Date(lv.start + 'T12:00:00Z');
+                            let end = new Date(lv.end + 'T12:00:00Z');
+
+                            while (cur <= end) {
+                                const c = dateToCol[cur.toISOString().slice(0, 10)];
+                                if (c) {
+                                    const lCell = ws.getCell(rowNum, c);
+                                    const isSAP = lv.type === 'Applied on SAP';
+                                    lCell.value = isSAP ? 'S' : 'P';
+                                    lCell.fill = isSAP ? fills.sap : fills.plan;
+                                    lCell.font = fonts.black;
+                                }
+                                cur.setDate(cur.getDate() + 1);
+                            }
+                        }
+                    });
+                }
+                rowNum++;
+            });
+        }
+
+        buildSheet(2026);
+        buildSheet(2027);
+
+        const outBuffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([outBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Operations-Master-Roster.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast('Exported seamlessly!', 'success');
+    } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+    }
+  }
+
+  // ── INIT APP ON LOAD ───────────────────────
+  document.addEventListener('DOMContentLoaded', loadData);
+
+</script>
+</body>
+</html>

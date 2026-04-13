@@ -1,0 +1,82 @@
+/* Custom Crew Colors */
+.crew-red { color: #FF0000; font-weight: bold; }
+.crew-yellow { color: #D4AF37; font-weight: bold; }
+.crew-green { color: #00B050; font-weight: bold; }
+.crew-lightblue { color: #0070C0; font-weight: bold; }
+.crew-lightviolet { color: #7030A0; font-weight: bold; }
+.crew-lightorange { color: #ED7D31; font-weight: bold; }
+.crew-grey { color: #808080; font-weight: bold; }
+
+/* Card Borders based on Crew */
+.border-crew-A { border-left: 5px solid #FF0000 !important; }
+.border-crew-B { border-left: 5px solid #0070C0 !important; }
+.border-crew-C { border-left: 5px solid #00B050 !important; }
+.border-crew-D { border-left: 5px solid #7030A0 !important; }
+.border-crew-General { border-left: 5px solid #808080 !important; }
+
+/* Pulse Animation for Conflicts */
+@keyframes pulse-red {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+.conflict-badge {
+    animation: pulse-red 2s infinite;
+}
+
+/* Timeline Grid Styling */
+.timeline-grid {
+    display: grid;
+    grid-template-columns: 180px repeat(30, 30px);
+    gap: 2px;
+    align-items: center;
+}
+
+.timeline-header {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #6b7280;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.timeline-cell {
+    height: 24px;
+    border-radius: 4px;
+    background-color: #f3f4f6;
+    transition: transform 0.1s ease, filter 0.1s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.timeline-cell:hover {
+    transform: scale(1.2);
+    filter: brightness(0.9);
+    z-index: 10;
+}
+
+/* Hover Tooltip Magic */
+.timeline-cell[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    z-index: 20;
+    pointer-events: none;
+}
+
+/* Magic Wand Animation */
+@keyframes magical-glow {
+    0% { box-shadow: 0 0 5px #9273DA; }
+    50% { box-shadow: 0 0 20px #9273DA, 0 0 40px #FFD700; }
+    100% { box-shadow: 0 0 5px #9273DA; }
+}
+.magic-resolving {
+    animation: magical-glow 1s ease-in-out;
+}
