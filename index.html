@@ -12,157 +12,348 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   
   <style>
-    :root { --brand-lilac:#9273DA; --brand-dark:#2E1A47; --brand-lime:#D2F050; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1b2940; margin: 0; padding: 0; }
-    
-    /* ── NEW HERO BANNER ── */
-    .hero-banner {
-      background: linear-gradient(135deg, var(--brand-dark) 0%, #4a2b75 50%, var(--brand-lilac) 100%);
-      padding: 120px 20px 80px 20px;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
-    /* Pulls the white content cards up over the banner slightly */
-    .overlap-content { margin-top: -40px; position: relative; z-index: 10; }
+        :root {
+            --brand-lilac:        #9273DA;
+            --brand-dark:         #2E2044;
+            --brand-lime:         #D2F050;
+            --bg-body:            #F9F7FC;
+            --primary-shade1:     146, 113, 219;
+            --primary-shade2:     46,  34,  53;
+            --secondary-shade1:   212, 252, 136;
+            --light-color:        255, 255, 255;
+            --dark-color:         0, 0, 0;
+            --common-radius:      12px;
+            --border-radius-card: 4px;
+            --button-radius:      0.6rem;
+        }
 
-    /* ── TRANSPARENT-TO-SOLID NAVBAR ── */
-    .acwa-navbar { 
-      background-color: transparent !important; 
-      padding: 20px 0; 
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000; 
-      transition: padding 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease; 
-    }
-    .acwa-navbar.scrolled { 
-      padding: 8px 0; 
-      background-color: rgba(46, 26, 71, 0.95) !important; 
-      backdrop-filter: blur(12px); 
-      box-shadow: 0 4px 30px rgba(0,0,0,0.3); 
-    }
-    .navbar-brand svg { height: 46px; width: auto; transition: height 0.4s ease; }
-    .acwa-navbar.scrolled .navbar-brand svg { height: 36px; }
-    
-    @media (min-width: 992px) {
-      .navbar-expand-lg .navbar-collapse { display: flex !important; visibility: visible !important; flex-basis: auto; }
-      .navbar-toggler { display: none !important; }
-    }
-    
-    /* ── CARDS & BADGES ── */
-    .sap-card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column;}
-    .sap-card-top { height: 5px; width: 100%; flex-shrink: 0;}
-    .badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 999px; }
-    .badge-sap      { background-color: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
-    .badge-planned  { background-color: #e0f2fe; color: #0288d1; border: 1px dashed #0288d1; }
-    .badge-conflict { background-color: #fee2e2; color: #b91c1c; }
-    
-    /* Custom Scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
-    
-    .crew-red         { color: #d32f2f; font-weight: 800; }
-    .crew-yellow      { color: #f9a825; font-weight: 800; }
-    .crew-green       { color: #2e7d32; font-weight: 800; }
-    .crew-lightblue   { color: #0288d1; font-weight: 800; }
-    .crew-lightviolet { color: #7b1fa2; font-weight: 800; }
-    .crew-lightorange { color: #ef6c00; font-weight: 800; }
-    .crew-grey        { color: #616161; font-weight: 800; }
-    
-    /* ── TOAST & MAGIC WAND ── */
-    #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    #toast.show { opacity: 1; transform: translateY(0); }
-    #toast.success { background: #2e7d32; }
-    #toast.error   { background: #b91c1c; }
-    #toast.saving  { background: #0288d1; }
-    @keyframes magical-glow { 0% { box-shadow: 0 0 5px #9273DA; } 50% { box-shadow: 0 0 30px #9273DA, 0 0 50px #D2F050; } 100% { box-shadow: 0 0 5px #9273DA; } }
-    .magic-resolving { animation: magical-glow 1.5s ease-in-out; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-body); background-repeat: no-repeat; background-position: -5% 90%; background-size: 500px; background-attachment: fixed;
+            color: var(--brand-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* ── ULTIMATE LOCKED TIMELINE (FROZEN PANES) ── */
-    .timeline-container-wrapper { 
-        overflow: auto; /* Enables both X and Y scrolling */
-        max-height: 65vh; /* Locks the box height so the slicer scrollbar is always visible */
-        max-width: 100%; 
-        border: 1px solid #e5e7eb; 
-        border-radius: 12px; 
-        background: white; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04); 
-        position: relative;
-    }
-    .timeline-grid-interactive { display: inline-grid; grid-template-columns: 200px repeat(365, 28px); gap: 0; }
-    
-    /* The Magic Sticky Elements */
-    .timeline-header-corner { 
-        position: sticky; top: 0; left: 0; z-index: 50; /* Highest z-index */
-        background: #f8fafc; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; 
-        display: flex; align-items: center; padding-left: 1rem; font-weight: 700; color: #4b5563; font-size: 0.85rem; 
-    }
-    .timeline-header-date { 
-        position: sticky; top: 0; z-index: 40; 
-        font-size: 0.65rem; text-align: center; color: #6b7280; font-weight: bold; padding: 4px 0; 
-        border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f3f4f6; background: #f8fafc; 
-    }
-    .timeline-name-col { 
-        position: sticky; left: 0; z-index: 30; 
-        background: white; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #f3f4f6; 
-        padding: 4px 12px; cursor: pointer; transition: background 0.2s; 
-    }
-    .timeline-name-col:hover { background: #f8fafc; }
-    
-    .timeline-cell { 
-        height: 100%; border-right: 1px solid #ffffff; border-bottom: 1px solid #f3f4f6; 
-        transition: transform 0.1s, filter 0.1s; position: relative; cursor: crosshair; z-index: 1;
-    }
-    .timeline-cell:hover { transform: scale(1.4); filter: brightness(0.85); z-index: 20; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .timeline-cell[title]:hover::after { 
-        content: attr(title); position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%); 
-        background-color: #1f2937; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
-    }
-    
-    @media(max-width:991px){
-      .navbar-collapse { background:rgba(46,34,53,.98); padding:1rem; border-radius:0 0 12px 12px; position:absolute; top:100%; left:0; right:0; box-shadow:0 10px 25px rgba(0,0,0,.5); z-index:1050; }
-      .nav-actions { flex-direction:column; align-items:stretch; margin-left:0; padding-top:10px; border-top:1px solid rgba(255,255,255,.1); }
-    }
-  </style>
+        /* ═══════════ NAVBAR ═══════════ */
+        .acwa-navbar {
+            background-color: transparent;
+            padding: 0;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .acwa-navbar.scrolled {
+            background-color: rgba(46, 34, 53, 0.84);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.28);
+        }
+        .acwa-navbar .container-fluid {
+            padding: 0 3rem;
+            max-width: 100%;
+        }
+        .navbar-brand { padding: 0; }
+        .navbar-brand svg {
+            height: 84px;
+            width: auto;
+            display: block;
+        }
+        .navbar-brand svg path { fill: #ffffff !important; }
+        .acwa-navbar .navbar-nav { align-items: stretch; }
+        .acwa-navbar .navbar-nav .nav-item {
+            display: flex;
+            align-items: stretch;
+        }
+        .nav-link {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.95) !important;
+            margin: 2.5rem 1rem;
+            padding: 0.5rem 0 !important;
+            border-bottom: 3px solid transparent;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+        .nav-link:hover,
+        .nav-item.active .nav-link {
+            color: var(--brand-lime) !important;
+            border-bottom: 3px solid #d4fd89;
+        }
+        .navbar-toggler {
+            background-color: #d3f888;
+            border: none !important;
+            border-radius: var(--common-radius);
+            padding: 8px;
+            width: auto;
+            height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: none !important;
+            color: #2f2335;
+            flex-shrink: 0;
+        }
+        .navbar-toggler:focus { box-shadow: none !important; }
+        .navbar-toggler-icon { filter: brightness(0); width: 1.2em; height: 1.2em; }
+
+
+        /* Always-visible action buttons — never collapse on mobile */
+        .navbar-always-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        @media (min-width: 992px) {
+            .navbar-always-actions { margin-right: 0; }
+        }
+
+        /* ACTION BUTTONS */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 15px;
+        }
+        .btn-sap {
+            border: 2px solid rgba(255,255,255,0.8);
+            color: white;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-sap:hover {
+            background-color: white;
+            color: var(--brand-dark);
+            border-color: white;
+        }
+        .btn-mini {
+            border: 1.5px solid rgba(255,255,255,.6);
+            color: #fff;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all .2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-mini:hover { background: rgba(255,255,255,.15); color: #fff; }
+        .btn-mini-lime {
+            background: rgba(210,240,80,.88);
+            color: #2E2044;
+            border: none;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all .2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+        }
+        .btn-mini-lime:hover { background: #D2F050; color: #2E2044; }
+
+        /* HERO SECTION */
+        .hero-section {
+            background: linear-gradient(rgba(46, 32, 68, 0.6), rgba(46, 32, 68, 0.3)), url("https://raw.githubusercontent.com/QIPP-Ops/calendar/main/hajr-ipp-banner.png");
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 8%;
+            padding-top: 84px;
+            position: relative;
+        }
+        .hero-text {
+            color: white;
+            font-size: 48px;
+            font-weight: 500;
+            line-height: 1.2;
+            text-align: left;
+            max-width: 600px;
+        }
+        .hero-text span { color: white; }
+
+        /* CONTENT AREA */
+        .overlap-content { margin-top: 0; position: relative; z-index: 10; padding-top: 2rem; }
+
+        /* ── CARDS & BADGES ── */
+        .sap-card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column;}
+        .sap-card-top { height: 5px; width: 100%; flex-shrink: 0;}
+        .badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 999px; }
+        .badge-sap      { background-color: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
+        .badge-planned  { background-color: #e0f2fe; color: #0288d1; border: 1px dashed #0288d1; }
+        .badge-conflict { background-color: #fee2e2; color: #b91c1c; }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+
+        .crew-red         { color: #d32f2f; font-weight: 800; }
+        .crew-yellow      { color: #f9a825; font-weight: 800; }
+        .crew-green       { color: #2e7d32; font-weight: 800; }
+        .crew-lightblue   { color: #0288d1; font-weight: 800; }
+        .crew-lightviolet { color: #7b1fa2; font-weight: 800; }
+        .crew-lightorange { color: #ef6c00; font-weight: 800; }
+        .crew-grey        { color: #616161; font-weight: 800; }
+
+        /* ── TOAST ── */
+        #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        #toast.show { opacity: 1; transform: translateY(0); }
+        #toast.success { background: #2e7d32; }
+        #toast.error   { background: #b91c1c; }
+        #toast.saving  { background: #0288d1; }
+        @keyframes magical-glow { 0% { box-shadow: 0 0 5px #9273DA; } 50% { box-shadow: 0 0 30px #9273DA, 0 0 50px #D2F050; } 100% { box-shadow: 0 0 5px #9273DA; } }
+        .magic-resolving { animation: magical-glow 1.5s ease-in-out; }
+
+        /* ── TIMELINE ── */
+        .timeline-container-wrapper {
+            overflow: auto;
+            max-height: 65vh;
+            max-width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            position: relative;
+        }
+        .timeline-grid-interactive { display: inline-grid; grid-template-columns: 200px repeat(365, 28px); gap: 0; }
+        .timeline-header-corner {
+            position: sticky; top: 0; left: 0; z-index: 50;
+            background: #f8fafc; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+            display: flex; align-items: center; padding-left: 1rem; font-weight: 700; color: #4b5563; font-size: 0.85rem;
+        }
+        .timeline-header-date {
+            position: sticky; top: 0; z-index: 40;
+            font-size: 0.65rem; text-align: center; color: #6b7280; font-weight: bold; padding: 4px 0;
+            border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f3f4f6; background: #f8fafc;
+        }
+        .timeline-name-col {
+            position: sticky; left: 0; z-index: 30;
+            background: white; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #f3f4f6;
+            padding: 4px 12px; cursor: pointer; transition: background 0.2s;
+        }
+        .timeline-name-col:hover { background: #f8fafc; }
+        .timeline-cell {
+            height: 100%; border-right: 1px solid #ffffff; border-bottom: 1px solid #f3f4f6;
+            transition: transform 0.1s, filter 0.1s; position: relative; cursor: crosshair; z-index: 1;
+        }
+        .timeline-cell:hover { transform: scale(1.4); filter: brightness(0.85); z-index: 20; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .timeline-cell[title]:hover::after {
+            content: attr(title); position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
+            background-color: #1f2937; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* ── RESPONSIVE ── */
+        @supports (-webkit-touch-callout: none) {
+            body { background-attachment: scroll !important; }
+        }
+        @media (max-width: 991px) {
+            body { background-attachment: scroll !important; }
+            .acwa-navbar .container-fluid { padding: 0 1rem !important; }
+            .navbar-brand svg { height: 50px !important; width: auto !important; }
+            .nav-link { margin: 0.4rem 0.5rem !important; padding: 0.5rem 0 !important; }
+            .acwa-navbar .navbar-collapse.show,
+            .acwa-navbar .navbar-collapse.collapsing {
+                background-color: rgba(46, 34, 53, 0.97);
+                padding: 0.5rem 1rem 1rem;
+                border-radius: 0 0 12px 12px;
+            }
+            .nav-actions { flex-direction: row; flex-wrap: wrap; gap: 8px !important; margin-left: 0 !important; padding-top: 0.5rem; }
+            .hero-text { font-size: clamp(22px, 6vw, 40px) !important; max-width: 100% !important; }
+            .hero-section { padding: 0 5% !important; padding-top: 70px !important; min-height: 280px !important; height: auto !important; }
+            .hero-text > div { font-size: clamp(14px, 3.5vw, 24px) !important; }
+            .overlap-content { padding-top: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .btn-sap, .btn-mini, .btn-mini-lime { font-size: 11px !important; padding: 5px 10px !important; }
+        }
+        * { -webkit-tap-highlight-color: transparent; }
+        input, select, textarea { font-size: 16px; }
+    </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg acwa-navbar">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <div style="display:flex;align-items:center;">
-        <svg viewBox="0 0 65 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12.0233 49.9211L36.3917 7.3999C37.9717 4.69273 40.2552 2.21894 41.7544 1.81053V1.49547H28.192C24.2479 1.49547 22.1259 2.84905 19.5195 7.3999L5.09216 32.6863C2.48578 37.2371 2.01294 39.4659 3.43146 43.1415L9.02479 57.3425H9.33617C9.02479 55.6622 10.4433 52.64 12.0117 49.9211H12.0233Z"/>
-          <path d="M53.6666 49.9215C55.2466 52.6287 56.6651 55.6626 56.3422 57.3429H56.6536L62.3277 43.1419C63.8269 39.4662 63.0427 36.7591 60.667 32.6867L58.222 28.4625C55.6157 23.9117 53.4937 22.5581 49.5495 22.5581H35.9064V22.8732C37.4056 23.2699 39.6891 25.7437 41.2691 28.4625L53.6436 49.9215H53.6666Z"/>
-          <path d="M56.9318 6.12801C56.5973 5.83629 56.3205 5.83629 55.9745 6.12801L51.0847 10.3288C50.5196 10.8072 50.2082 11.1689 49.943 11.6707H49.8738V7.08485C49.8738 6.44307 50.139 5.84795 50.6349 5.42788L54.3946 2.20728C55.8823 0.923707 57.0356 0.912038 58.5463 2.20728L62.306 5.42788C62.7903 5.84795 63.0671 6.4314 63.0671 7.08485V11.6707H62.9979C62.7327 11.1689 62.4213 10.8072 61.8562 10.3288L56.9664 6.13968L56.9318 6.12801Z"/>
-        </svg>
-        <span style="font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:white;margin-left:14px;padding-left:14px;border-left:2px solid rgba(255,255,255,0.2);letter-spacing:1px;">OPERATIONS</span>
-      </div>
-    </a>
-    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-        <li class="nav-item nav-actions flex gap-3">
-          <button id="cal-nav-btn" class="inline-flex items-center justify-center gap-2 px-5 py-2 text-[13px] font-bold text-white bg-[#9273DA] hover:bg-[#7b5dc2] rounded-full transition-all duration-200 border-none cursor-pointer shadow hover:shadow-md" type="button" onclick="toggleView()">
-            &#9654; View Timeline
-          </button>
-          <button type="button" class="inline-flex items-center justify-center gap-2 px-5 py-2 text-[13px] font-bold text-[#2E2044] bg-[#D2F050] hover:bg-[#c0df45] rounded-full transition-all duration-200 border-none cursor-pointer shadow hover:shadow-md" onclick="exportToExcel()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Export Excel
-          </button>
-        </li>
-      </ul>
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="https://www.acwapower.com/en/"><div style='display:flex; align-items:center;'>
+            <svg viewBox="0 0 65 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.69666 76.3653L3.61597 73.6521C4.99916 72.5764 6.659 71.8952 8.79142 71.8952C12.8488 71.8952 14.1398 74.4649 14.1398 77.6561V87.6482H11.5463V85.7119L11.0276 86.8713C10.9123 87.1342 10.6587 87.3494 10.3936 87.4689C9.52912 87.8872 8.41104 87.9709 7.80013 87.9709C5.29886 87.9709 2.53247 86.3932 2.53247 83.441C2.53247 80.8713 4.63031 78.5525 8.86058 78.5525H11.5348C11.5117 75.0983 10.4743 74.2617 8.37646 74.2617C6.45152 74.2617 4.89543 74.9788 3.68513 76.3772L3.69666 76.3653ZM8.18051 85.6402C9.35622 85.6402 10.5665 85.3175 11.5463 84.7199V80.931H9.045C6.60136 80.931 5.25275 81.8274 5.25275 83.4051C5.25275 84.8394 6.3132 85.6402 8.18051 85.6402ZM17.1252 79.939C17.1252 75.0147 19.5688 71.8832 23.7414 71.8832C24.8941 71.8832 26.5885 72.1223 28.2599 73.198L28.2022 75.6721C26.7614 74.7756 25.2745 74.2976 24.0296 74.2976C21.3785 74.2976 19.8915 76.3294 19.8915 79.939C19.8915 83.5486 21.4131 85.4848 24.1794 85.4848C25.5857 85.4848 27.1648 84.947 28.548 83.9908L28.6057 86.5605C26.819 87.7199 24.9863 87.9948 23.7414 87.9948C19.5688 87.9948 17.1252 84.8633 17.1252 79.939ZM33.8618 87.6362L30.473 72.2537H33.1241L35.6023 84.7438H35.7176L38.6223 72.2537H42.0687L44.9734 84.7438H45.0887L47.5669 72.2537H50.218L46.8292 87.6362H43.4058L40.4435 75.8513H40.2706L37.3082 87.6362H33.8848H33.8618ZM52.5003 76.3653L52.4196 73.6521C53.8028 72.5764 55.4627 71.8952 57.5951 71.8952C61.6524 71.8952 62.9434 74.4649 62.9434 77.6561V87.6482H60.3499V85.7119L59.8312 86.8713C59.716 87.1342 59.4624 87.3494 59.1973 87.4689C58.3328 87.8872 57.2147 87.9709 56.6038 87.9709C54.1025 87.9709 51.3361 86.3932 51.3361 83.441C51.3361 80.8713 53.434 78.5525 57.6642 78.5525H60.3384C60.3154 75.0983 59.278 74.2617 57.1801 74.2617C55.2552 74.2617 53.6991 74.9788 52.4888 76.3772L52.5003 76.3653ZM56.9842 85.6402C58.1599 85.6402 59.3702 85.3175 60.3499 84.7199V80.931H57.8487C55.405 80.931 54.0564 81.8274 54.0564 83.4051C54.0564 84.8394 55.1169 85.6402 56.9842 85.6402Z"/>
+                <path d="M12.0233 49.9211L36.3917 7.3999C37.9717 4.69273 40.2552 2.21894 41.7544 1.81053V1.49547H28.192C24.2479 1.49547 22.1259 2.84905 19.5195 7.3999L5.09216 32.6863C2.48578 37.2371 2.01294 39.4659 3.43146 43.1415L9.02479 57.3425H9.33617C9.02479 55.6622 10.4433 52.64 12.0117 49.9211H12.0233Z"/>
+                <path d="M53.6666 49.9215C55.2466 52.6287 56.6651 55.6626 56.3422 57.3429H56.6536L62.3277 43.1419C63.8269 39.4662 63.0427 36.7591 60.667 32.6867L58.222 28.4625C55.6157 23.9117 53.4937 22.5581 49.5495 22.5581H35.9064V22.8732C37.4056 23.2699 39.6891 25.7437 41.2691 28.4625L53.6436 49.9215H53.6666Z"/>
+                <path d="M56.9318 6.12801C56.5973 5.83629 56.3205 5.83629 55.9745 6.12801L51.0847 10.3288C50.5196 10.8072 50.2082 11.1689 49.943 11.6707H49.8738V7.08485C49.8738 6.44307 50.139 5.84795 50.6349 5.42788L54.3946 2.20728C55.8823 0.923707 57.0356 0.912038 58.5463 2.20728L62.306 5.42788C62.7903 5.84795 63.0671 6.4314 63.0671 7.08485V11.6707H62.9979C62.7327 11.1689 62.4213 10.8072 61.8562 10.3288L56.9664 6.13968L56.9318 6.12801Z"/>
+            </svg>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 600; color: white; margin-left: 15px; padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.4); letter-spacing: 1px; line-height: 1;">OPERATIONS</span></div></a>
+
+        <!-- ALWAYS-VISIBLE ACTION BUTTONS (right of logo, never collapse) -->
+        <div class="navbar-always-actions">
+            <button id="cal-nav-btn" class="btn-mini" type="button" onclick="toggleView()">&#9654; View Timeline</button>
+            <button type="button" class="btn-mini-lime" onclick="exportToExcel()">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Excel
+            </button>
+        </div>
+
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+
+        <!-- COLLAPSIBLE: nav links + site links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/projects/hajr-ipp/" target="_blank">Who we are</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/acwa-operations/" target="_blank">What we do</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://hcm23.sapsf.com/sf/home?bplte_company=acwapowerc" target="_blank">SuccessFactors</a></li>
+                <li class="nav-item nav-actions">
+                    <a href="https://apnomac.synergilife.dnv.com/" class="btn-sap" target="_blank">Synergi Life</a>
+                    <a href="https://flpnwc-fpg6i1pyim.dispatcher.sa1.hana.ondemand.com/sites?siteId=bd8f998f-0949-4d95-b233-fbf3aa884a5c#Shell-home" target="_blank" class="btn-sap">S4HANA</a>
+                    <a href="https://acwapi-my.sharepoint.com/:x:/g/personal/m_algarni_nomac_com/IQBX9-3015HcT6C0FTLuB_lOAfVqMX5BJTYTqFMVOwZ7nwE?e=dQHZWw" target="_blank" class="btn-mini-lime"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Planned Leaves</a>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
-<div class="hero-banner">
-  <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Operations Dashboard</h1>
-  <p class="text-lg md:text-xl font-medium opacity-90">Leave Planning & Live Conflict Management 2026</p>
+<!-- HERO SECTION -->
+<div class="hero-section">
+    <div class="hero-text">
+        Advancing <span style="color: var(--brand-lime); font-weight: 700;">life</span><br>
+        through energy,<br>
+        <span style="color: var(--brand-lime); font-weight: 700;">water</span> and <span style="color: var(--brand-lime); font-weight: 700;">ingenuity</span>.
+        <div style="margin-top: 25px; font-size: 24px; font-weight: 400; opacity: 0.9; border-left: 4px solid var(--brand-lime); padding-left: 15px;">
+            Safe, reliable power and water.
+        </div>
+    </div>
 </div>
 
 <div id="toast"></div>
