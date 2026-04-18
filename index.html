@@ -6,382 +6,304 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Operations Roster 2026</title>
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  
   <style>
-        :root {
-            --brand-lilac:        #9273DA;
-            --brand-dark:         #2E2044;
-            --brand-lime:         #D2F050;
-            --bg-body:            #F9F7FC;
-            --primary-shade1:     146, 113, 219;
-            --primary-shade2:     46,  34,  53;
-            --secondary-shade1:   212, 252, 136;
-            --light-color:        255, 255, 255;
-            --dark-color:         0, 0, 0;
-            --common-radius:      12px;
-            --border-radius-card: 4px;
-            --button-radius:      0.6rem;
-        }
+    :root {
+      --brand-lilac: #9273DA;
+      --brand-dark: #2E2044;
+      --brand-lime: #D2F050;
+      --bg-body: #F9F7FC;
+      --primary-shade1: 146, 113, 219;
+      --primary-shade2: 46, 34, 53;
+      --secondary-shade1: 212, 252, 136;
+      --light-color: 255, 255, 255;
+      --dark-color: 0, 0, 0;
+      --common-radius: 12px;
+      --border-radius-card: 4px;
+      --button-radius: 0.6rem;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-body); background-repeat: no-repeat; background-position: -5% 90%; background-size: 500px; background-attachment: fixed;
+      color: var(--brand-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .acwa-navbar {
+      background-color: transparent;
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    .acwa-navbar.scrolled {
+      background-color: rgba(46, 34, 53, 0.84);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.28);
+    }
+    .acwa-navbar .container-fluid { padding: 0 3rem; max-width: 100%; }
+    .navbar-brand { padding: 0; }
+    .navbar-brand svg { height: 84px; width: auto; display: block; }
+    .navbar-brand svg path { fill: #ffffff !important; }
+    .acwa-navbar .navbar-nav { align-items: stretch; }
+    .acwa-navbar .navbar-nav .nav-item { display: flex; align-items: stretch; }
+    .nav-link {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      color: rgba(255,255,255,0.95) !important;
+      margin: 2.5rem 1rem;
+      padding: 0.5rem 0 !important;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    .nav-link:hover, .nav-item.active .nav-link {
+      color: var(--brand-lime) !important;
+      border-bottom: 3px solid #d4fd89;
+    }
+    .navbar-toggler {
+      background-color: #d3f888;
+      border: none !important;
+      border-radius: var(--common-radius);
+      padding: 8px;
+      width: auto; height: 42px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: none !important;
+      color: #2f2335;
+      flex-shrink: 0;
+    }
+    .navbar-toggler:focus { box-shadow: none !important; }
+    .navbar-toggler-icon { filter: brightness(0); width: 1.2em; height: 1.2em; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    .navbar-always-actions {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: auto; margin-right: 12px; flex-shrink: 0;
+    }
+    @media (min-width: 992px) { .navbar-always-actions { margin-right: 0; } }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-body); background-repeat: no-repeat; background-position: -5% 90%; background-size: 500px; background-attachment: fixed;
-            color: var(--brand-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    .nav-actions {
+      display: flex; align-items: center; gap: 10px; margin-left: 15px;
+    }
+    .btn-sap {
+      border: 2px solid rgba(255,255,255,0.8);
+      color: white; font-weight: 600; padding: 8px 20px;
+      border-radius: 50px; font-size: 14px;
+      text-decoration: none; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-sap:hover { background-color: white; color: var(--brand-dark); border-color: white; }
 
-        /* ═══════════ NAVBAR ═══════════ */
-        .acwa-navbar {
-            background-color: transparent;
-            padding: 0;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            transition: background-color 0.4s ease, box-shadow 0.4s ease;
-        }
-        .acwa-navbar.scrolled {
-            background-color: rgba(46, 34, 53, 0.84);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.28);
-        }
-        .acwa-navbar .container-fluid {
-            padding: 0 3rem;
-            max-width: 100%;
-        }
-        .navbar-brand { padding: 0; }
-        .navbar-brand svg {
-            height: 84px;
-            width: auto;
-            display: block;
-        }
-        .navbar-brand svg path { fill: #ffffff !important; }
-        .acwa-navbar .navbar-nav { align-items: stretch; }
-        .acwa-navbar .navbar-nav .nav-item {
-            display: flex;
-            align-items: stretch;
-        }
-        .nav-link {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
-            color: rgba(255,255,255,0.95) !important;
-            margin: 2.5rem 1rem;
-            padding: 0.5rem 0 !important;
-            border-bottom: 3px solid transparent;
-            transition: color 0.2s ease, border-color 0.2s ease;
-            text-transform: capitalize;
-            white-space: nowrap;
-        }
-        .nav-link:hover,
-        .nav-item.active .nav-link {
-            color: var(--brand-lime) !important;
-            border-bottom: 3px solid #d4fd89;
-        }
-        .navbar-toggler {
-            background-color: #d3f888;
-            border: none !important;
-            border-radius: var(--common-radius);
-            padding: 8px;
-            width: auto;
-            height: 42px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: none !important;
-            color: #2f2335;
-            flex-shrink: 0;
-        }
-        .navbar-toggler:focus { box-shadow: none !important; }
-        .navbar-toggler-icon { filter: brightness(0); width: 1.2em; height: 1.2em; }
+    .hero-section {
+      background: linear-gradient(rgba(46, 32, 68, 0.6), rgba(46, 32, 68, 0.3)), url("https://raw.githubusercontent.com/QIPP-Ops/calendar/main/hajr-ipp-banner.png");
+      background-size: cover; background-position: center;
+      height: 60vh; width: 100%;
+      display: flex; align-items: center; justify-content: flex-start;
+      padding: 0 8%; padding-top: 84px; position: relative;
+    }
+    .hero-text { color: white; font-size: 48px; font-weight: 500; line-height: 1.2; text-align: left; max-width: 600px; }
+    .hero-text span { color: white; }
 
+    .overlap-content { margin-top: 0; position: relative; z-index: 10; padding-top: 2rem; }
 
-        /* Always-visible action buttons — never collapse on mobile */
-        .navbar-always-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: auto;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-        @media (min-width: 992px) {
-            .navbar-always-actions { margin-right: 0; }
-        }
+    .sap-card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column; }
+    .sap-card-top { height: 5px; width: 100%; flex-shrink: 0; }
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 999px; }
+    .badge-sap      { background-color: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
+    .badge-planned  { background-color: #e0f2fe; color: #0288d1; border: 1px dashed #0288d1; }
+    .badge-conflict { background-color: #fee2e2; color: #b91c1c; }
 
-        /* ACTION BUTTONS */
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: 15px;
-        }
-        .btn-sap {
-            border: 2px solid rgba(255,255,255,0.8);
-            color: white;
-            font-weight: 600;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-sap:hover {
-            background-color: white;
-            color: var(--brand-dark);
-            border-color: white;
-        }
-        .btn-mini {
-            border: 1.5px solid rgba(255,255,255,.6);
-            color: #fff;
-            font-weight: 600;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 12px;
-            text-decoration: none;
-            transition: all .2s;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            background: transparent;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .btn-mini:hover { background: rgba(255,255,255,.15); color: #fff; }
-        .btn-mini-lime {
-            background: rgba(210,240,80,.88);
-            color: #2E2044;
-            border: none;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 12px;
-            text-decoration: none;
-            transition: all .2s;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-        }
-        .btn-mini-lime:hover { background: #D2F050; color: #2E2044; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        /* HERO SECTION */
-        .hero-section {
-            background: linear-gradient(rgba(46, 32, 68, 0.6), rgba(46, 32, 68, 0.3)), url("https://raw.githubusercontent.com/QIPP-Ops/calendar/main/hajr-ipp-banner.png");
-            background-size: cover;
-            background-position: center;
-            height: 60vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 8%;
-            padding-top: 84px;
-            position: relative;
-        }
-        .hero-text {
-            color: white;
-            font-size: 48px;
-            font-weight: 500;
-            line-height: 1.2;
-            text-align: left;
-            max-width: 600px;
-        }
-        .hero-text span { color: white; }
+    dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
 
-        /* CONTENT AREA */
-        .overlap-content { margin-top: 0; position: relative; z-index: 10; padding-top: 2rem; }
+    .crew-red         { color: #d32f2f; font-weight: 800; }
+    .crew-yellow      { color: #f9a825; font-weight: 800; }
+    .crew-green       { color: #2e7d32; font-weight: 800; }
+    .crew-lightblue   { color: #0288d1; font-weight: 800; }
+    .crew-lightviolet { color: #7b1fa2; font-weight: 800; }
+    .crew-lightorange { color: #ef6c00; font-weight: 800; }
+    .crew-grey        { color: #616161; font-weight: 800; }
 
-        /* ── CARDS & BADGES ── */
-        .sap-card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column;}
-        .sap-card-top { height: 5px; width: 100%; flex-shrink: 0;}
-        .badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 999px; }
-        .badge-sap      { background-color: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
-        .badge-planned  { background-color: #e0f2fe; color: #0288d1; border: 1px dashed #0288d1; }
-        .badge-conflict { background-color: #fee2e2; color: #b91c1c; }
+    #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: #2e7d32; }
+    #toast.error   { background: #b91c1c; }
+    #toast.saving  { background: #0288d1; }
+    @keyframes magical-glow { 0% { box-shadow: 0 0 5px #9273DA; } 50% { box-shadow: 0 0 30px #9273DA, 0 0 50px #D2F050; } 100% { box-shadow: 0 0 5px #9273DA; } }
+    .magic-resolving { animation: magical-glow 1.5s ease-in-out; }
 
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    /* PIN Dialog */
+    #pin-dialog { border-radius: 20px; border: none; padding: 0; box-shadow: 0 25px 60px rgba(0,0,0,0.3); width: 320px; max-width: 95vw; }
+    #pin-dialog::backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); }
+    .pin-display { font-size: 32px; letter-spacing: 12px; text-align: center; padding: 16px; background: #f8f7fc; border-radius: 12px; min-height: 60px; color: #2E2044; font-weight: 800; }
+    .pin-btn { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #e5e7eb; font-size: 20px; font-weight: 700; cursor: pointer; transition: all 0.15s; background: white; color: #2E2044; display: flex; align-items: center; justify-content: center; }
+    .pin-btn:hover { background: #9273DA; color: white; border-color: #9273DA; transform: scale(1.05); }
+    .pin-btn:active { transform: scale(0.95); }
+    .pin-btn.zero { width: 152px; border-radius: 36px; }
+    .pin-btn.del { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+    .pin-btn.del:hover { background: #b91c1c; color: white; border-color: #b91c1c; }
 
-        dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+    /* Admin panel inside Algarni card */
+    .admin-panel { background: linear-gradient(135deg, #f3f0ff, #fafafa); border: 1.5px solid #c4b5fd; border-radius: 10px; padding: 10px 12px; margin-top: 8px; }
 
-        .crew-red         { color: #d32f2f; font-weight: 800; }
-        .crew-yellow      { color: #f9a825; font-weight: 800; }
-        .crew-green       { color: #2e7d32; font-weight: 800; }
-        .crew-lightblue   { color: #0288d1; font-weight: 800; }
-        .crew-lightviolet { color: #7b1fa2; font-weight: 800; }
-        .crew-lightorange { color: #ef6c00; font-weight: 800; }
-        .crew-grey        { color: #616161; font-weight: 800; }
+    .timeline-container-wrapper { overflow: auto; max-height: 65vh; max-width: 100%; border: 1px solid #e5e7eb; border-radius: 12px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.04); position: relative; }
+    .timeline-grid-interactive { display: inline-grid; grid-template-columns: 200px repeat(365, 28px); gap: 0; }
+    .timeline-header-corner { position: sticky; top: 0; left: 0; z-index: 50; background: #f8fafc; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; padding-left: 1rem; font-weight: 700; color: #4b5563; font-size: 0.85rem; }
+    .timeline-header-date { position: sticky; top: 0; z-index: 40; font-size: 0.65rem; text-align: center; color: #6b7280; font-weight: bold; padding: 4px 0; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f3f4f6; background: #f8fafc; }
+    .timeline-name-col { position: sticky; left: 0; z-index: 30; background: white; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #f3f4f6; padding: 4px 12px; cursor: pointer; transition: background 0.2s; }
+    .timeline-name-col:hover { background: #f8fafc; }
+    .timeline-cell { height: 100%; border-right: 1px solid #ffffff; border-bottom: 1px solid #f3f4f6; transition: transform 0.1s, filter 0.1s; position: relative; cursor: crosshair; z-index: 1; }
+    .timeline-cell:hover { transform: scale(1.4); filter: brightness(0.85); z-index: 20; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .timeline-cell[title]:hover::after { content: attr(title); position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%); background-color: #1f2937; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 
-        /* ── TOAST ── */
-        #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        #toast.show { opacity: 1; transform: translateY(0); }
-        #toast.success { background: #2e7d32; }
-        #toast.error   { background: #b91c1c; }
-        #toast.saving  { background: #0288d1; }
-        @keyframes magical-glow { 0% { box-shadow: 0 0 5px #9273DA; } 50% { box-shadow: 0 0 30px #9273DA, 0 0 50px #D2F050; } 100% { box-shadow: 0 0 5px #9273DA; } }
-        .magic-resolving { animation: magical-glow 1.5s ease-in-out; }
+    .btn-mini { border: 1.5px solid rgba(255,255,255,.6); color: #fff; font-weight: 600; padding: 6px 14px; border-radius: 50px; font-size: 12px; text-decoration: none; transition: all .2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: transparent; font-family: 'Montserrat', sans-serif; }
+    .btn-mini:hover { background: rgba(255,255,255,.15); color: #fff; }
+    .btn-mini-lime { background: rgba(210,240,80,.88); color: #2E2044; border: none; font-weight: 700; padding: 6px 14px; border-radius: 50px; font-size: 12px; text-decoration: none; transition: all .2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; font-family: 'Montserrat', sans-serif; cursor: pointer; }
+    .btn-mini-lime:hover { background: #D2F050; color: #2E2044; }
 
-        /* ── TIMELINE ── */
-        .timeline-container-wrapper {
-            overflow: auto;
-            max-height: 65vh;
-            max-width: 100%;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
-            position: relative;
-        }
-        .timeline-grid-interactive { display: inline-grid; grid-template-columns: 200px repeat(365, 28px); gap: 0; }
-        .timeline-header-corner {
-            position: sticky; top: 0; left: 0; z-index: 50;
-            background: #f8fafc; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
-            display: flex; align-items: center; padding-left: 1rem; font-weight: 700; color: #4b5563; font-size: 0.85rem;
-        }
-        .timeline-header-date {
-            position: sticky; top: 0; z-index: 40;
-            font-size: 0.65rem; text-align: center; color: #6b7280; font-weight: bold; padding: 4px 0;
-            border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f3f4f6; background: #f8fafc;
-        }
-        .timeline-name-col {
-            position: sticky; left: 0; z-index: 30;
-            background: white; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #f3f4f6;
-            padding: 4px 12px; cursor: pointer; transition: background 0.2s;
-        }
-        .timeline-name-col:hover { background: #f8fafc; }
-        .timeline-cell {
-            height: 100%; border-right: 1px solid #ffffff; border-bottom: 1px solid #f3f4f6;
-            transition: transform 0.1s, filter 0.1s; position: relative; cursor: crosshair; z-index: 1;
-        }
-        .timeline-cell:hover { transform: scale(1.4); filter: brightness(0.85); z-index: 20; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .timeline-cell[title]:hover::after {
-            content: attr(title); position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
-            background-color: #1f2937; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        /* ── RESPONSIVE ── */
-        @supports (-webkit-touch-callout: none) {
-            body { background-attachment: scroll !important; }
-        }
-        @media (max-width: 991px) {
-            body { background-attachment: scroll !important; }
-            .acwa-navbar .container-fluid { padding: 0 1rem !important; }
-            .navbar-brand svg { height: 50px !important; width: auto !important; }
-            .nav-link { margin: 0.4rem 0.5rem !important; padding: 0.5rem 0 !important; }
-            .acwa-navbar .navbar-collapse.show,
-            .acwa-navbar .navbar-collapse.collapsing {
-                background-color: rgba(46, 34, 53, 0.97);
-                padding: 0.5rem 1rem 1rem;
-                border-radius: 0 0 12px 12px;
-            }
-            .nav-actions { flex-direction: row; flex-wrap: wrap; gap: 8px !important; margin-left: 0 !important; padding-top: 0.5rem; }
-            .hero-text { font-size: clamp(22px, 6vw, 40px) !important; max-width: 100% !important; }
-            .hero-section { padding: 0 5% !important; padding-top: 70px !important; min-height: 280px !important; height: auto !important; }
-            .hero-text > div { font-size: clamp(14px, 3.5vw, 24px) !important; }
-            .overlap-content { padding-top: 1.5rem; }
-        }
-        @media (max-width: 480px) {
-            .btn-sap, .btn-mini, .btn-mini-lime { font-size: 11px !important; padding: 5px 10px !important; }
-        }
-        * { -webkit-tap-highlight-color: transparent; }
-        input, select, textarea { font-size: 16px; }
-    </style>
+    @supports (-webkit-touch-callout: none) { body { background-attachment: scroll !important; } }
+    @media (max-width: 991px) {
+      body { background-attachment: scroll !important; }
+      .acwa-navbar .container-fluid { padding: 0 1rem !important; }
+      .navbar-brand svg { height: 50px !important; width: auto !important; }
+      .nav-link { margin: 0.4rem 0.5rem !important; padding: 0.5rem 0 !important; }
+      .navbar-toggler { width: auto !important; flex-shrink: 0; }
+      .acwa-navbar .navbar-collapse.show, .acwa-navbar .navbar-collapse.collapsing { background-color: rgba(46, 34, 53, 0.97); padding: 0.5rem 1rem 1rem; border-radius: 0 0 12px 12px; }
+      .nav-actions { flex-direction: row; flex-wrap: wrap; gap: 8px !important; margin-left: 0 !important; padding-top: 0.5rem; }
+      .hero-text { font-size: clamp(22px, 6vw, 40px) !important; max-width: 100% !important; }
+      .hero-section { padding: 0 5% !important; padding-top: 70px !important; min-height: 280px !important; height: auto !important; }
+      .hero-text > div { font-size: clamp(14px, 3.5vw, 24px) !important; }
+      .overlap-content { padding-top: 1.5rem; }
+    }
+    @media (max-width: 480px) { .btn-sap, .btn-mini, .btn-mini-lime { font-size: 11px !important; padding: 5px 10px !important; } }
+    * { -webkit-tap-highlight-color: transparent; }
+    input, select, textarea { font-size: 16px; }
+  </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg acwa-navbar">
-    <div class="container-fluid">
-        <!-- Logo -->
-        <a class="navbar-brand" href="https://www.acwapower.com/en/"><div style='display:flex; align-items:center;'>
-            <svg viewBox="0 0 65 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3.69666 76.3653L3.61597 73.6521C4.99916 72.5764 6.659 71.8952 8.79142 71.8952C12.8488 71.8952 14.1398 74.4649 14.1398 77.6561V87.6482H11.5463V85.7119L11.0276 86.8713C10.9123 87.1342 10.6587 87.3494 10.3936 87.4689C9.52912 87.8872 8.41104 87.9709 7.80013 87.9709C5.29886 87.9709 2.53247 86.3932 2.53247 83.441C2.53247 80.8713 4.63031 78.5525 8.86058 78.5525H11.5348C11.5117 75.0983 10.4743 74.2617 8.37646 74.2617C6.45152 74.2617 4.89543 74.9788 3.68513 76.3772L3.69666 76.3653ZM8.18051 85.6402C9.35622 85.6402 10.5665 85.3175 11.5463 84.7199V80.931H9.045C6.60136 80.931 5.25275 81.8274 5.25275 83.4051C5.25275 84.8394 6.3132 85.6402 8.18051 85.6402ZM17.1252 79.939C17.1252 75.0147 19.5688 71.8832 23.7414 71.8832C24.8941 71.8832 26.5885 72.1223 28.2599 73.198L28.2022 75.6721C26.7614 74.7756 25.2745 74.2976 24.0296 74.2976C21.3785 74.2976 19.8915 76.3294 19.8915 79.939C19.8915 83.5486 21.4131 85.4848 24.1794 85.4848C25.5857 85.4848 27.1648 84.947 28.548 83.9908L28.6057 86.5605C26.819 87.7199 24.9863 87.9948 23.7414 87.9948C19.5688 87.9948 17.1252 84.8633 17.1252 79.939ZM33.8618 87.6362L30.473 72.2537H33.1241L35.6023 84.7438H35.7176L38.6223 72.2537H42.0687L44.9734 84.7438H45.0887L47.5669 72.2537H50.218L46.8292 87.6362H43.4058L40.4435 75.8513H40.2706L37.3082 87.6362H33.8848H33.8618ZM52.5003 76.3653L52.4196 73.6521C53.8028 72.5764 55.4627 71.8952 57.5951 71.8952C61.6524 71.8952 62.9434 74.4649 62.9434 77.6561V87.6482H60.3499V85.7119L59.8312 86.8713C59.716 87.1342 59.4624 87.3494 59.1973 87.4689C58.3328 87.8872 57.2147 87.9709 56.6038 87.9709C54.1025 87.9709 51.3361 86.3932 51.3361 83.441C51.3361 80.8713 53.434 78.5525 57.6642 78.5525H60.3384C60.3154 75.0983 59.278 74.2617 57.1801 74.2617C55.2552 74.2617 53.6991 74.9788 52.4888 76.3772L52.5003 76.3653ZM56.9842 85.6402C58.1599 85.6402 59.3702 85.3175 60.3499 84.7199V80.931H57.8487C55.405 80.931 54.0564 81.8274 54.0564 83.4051C54.0564 84.8394 55.1169 85.6402 56.9842 85.6402Z"/>
-                <path d="M12.0233 49.9211L36.3917 7.3999C37.9717 4.69273 40.2552 2.21894 41.7544 1.81053V1.49547H28.192C24.2479 1.49547 22.1259 2.84905 19.5195 7.3999L5.09216 32.6863C2.48578 37.2371 2.01294 39.4659 3.43146 43.1415L9.02479 57.3425H9.33617C9.02479 55.6622 10.4433 52.64 12.0117 49.9211H12.0233Z"/>
-                <path d="M53.6666 49.9215C55.2466 52.6287 56.6651 55.6626 56.3422 57.3429H56.6536L62.3277 43.1419C63.8269 39.4662 63.0427 36.7591 60.667 32.6867L58.222 28.4625C55.6157 23.9117 53.4937 22.5581 49.5495 22.5581H35.9064V22.8732C37.4056 23.2699 39.6891 25.7437 41.2691 28.4625L53.6436 49.9215H53.6666Z"/>
-                <path d="M56.9318 6.12801C56.5973 5.83629 56.3205 5.83629 55.9745 6.12801L51.0847 10.3288C50.5196 10.8072 50.2082 11.1689 49.943 11.6707H49.8738V7.08485C49.8738 6.44307 50.139 5.84795 50.6349 5.42788L54.3946 2.20728C55.8823 0.923707 57.0356 0.912038 58.5463 2.20728L62.306 5.42788C62.7903 5.84795 63.0671 6.4314 63.0671 7.08485V11.6707H62.9979C62.7327 11.1689 62.4213 10.8072 61.8562 10.3288L56.9664 6.13968L56.9318 6.12801Z"/>
-            </svg>
-            <span style="font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 600; color: white; margin-left: 15px; padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.4); letter-spacing: 1px; line-height: 1;">OPERATIONS</span></div></a>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="https://www.acwapower.com/en/"><div style='display:flex; align-items:center;'>
+      <svg viewBox="0 0 65 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.69666 76.3653L3.61597 73.6521C4.99916 72.5764 6.659 71.8952 8.79142 71.8952C12.8488 71.8952 14.1398 74.4649 14.1398 77.6561V87.6482H11.5463V85.7119L11.0276 86.8713C10.9123 87.1342 10.6587 87.3494 10.3936 87.4689C9.52912 87.8872 8.41104 87.9709 7.80013 87.9709C5.29886 87.9709 2.53247 86.3932 2.53247 83.441C2.53247 80.8713 4.63031 78.5525 8.86058 78.5525H11.5348C11.5117 75.0983 10.4743 74.2617 8.37646 74.2617C6.45152 74.2617 4.89543 74.9788 3.68513 76.3772L3.69666 76.3653ZM8.18051 85.6402C9.35622 85.6402 10.5665 85.3175 11.5463 84.7199V80.931H9.045C6.60136 80.931 5.25275 81.8274 5.25275 83.4051C5.25275 84.8394 6.3132 85.6402 8.18051 85.6402ZM17.1252 79.939C17.1252 75.0147 19.5688 71.8832 23.7414 71.8832C24.8941 71.8832 26.5885 72.1223 28.2599 73.198L28.2022 75.6721C26.7614 74.7756 25.2745 74.2976 24.0296 74.2976C21.3785 74.2976 19.8915 76.3294 19.8915 79.939C19.8915 83.5486 21.4131 85.4848 24.1794 85.4848C25.5857 85.4848 27.1648 84.947 28.548 83.9908L28.6057 86.5605C26.819 87.7199 24.9863 87.9948 23.7414 87.9948C19.5688 87.9948 17.1252 84.8633 17.1252 79.939ZM33.8618 87.6362L30.473 72.2537H33.1241L35.6023 84.7438H35.7176L38.6223 72.2537H42.0687L44.9734 84.7438H45.0887L47.5669 72.2537H50.218L46.8292 87.6362H43.4058L40.4435 75.8513H40.2706L37.3082 87.6362H33.8848H33.8618ZM52.5003 76.3653L52.4196 73.6521C53.8028 72.5764 55.4627 71.8952 57.5951 71.8952C61.6524 71.8952 62.9434 74.4649 62.9434 77.6561V87.6482H60.3499V85.7119L59.8312 86.8713C59.716 87.1342 59.4624 87.3494 59.1973 87.4689C58.3328 87.8872 57.2147 87.9709 56.6038 87.9709C54.1025 87.9709 51.3361 86.3932 51.3361 83.441C51.3361 80.8713 53.434 78.5525 57.6642 78.5525H60.3384C60.3154 75.0983 59.278 74.2617 57.1801 74.2617C55.2552 74.2617 53.6991 74.9788 52.4888 76.3772L52.5003 76.3653ZM56.9842 85.6402C58.1599 85.6402 59.3702 85.3175 60.3499 84.7199V80.931H57.8487C55.405 80.931 54.0564 81.8274 54.0564 83.4051C54.0564 84.8394 55.1169 85.6402 56.9842 85.6402Z"/>
+        <path d="M12.0233 49.9211L36.3917 7.3999C37.9717 4.69273 40.2552 2.21894 41.7544 1.81053V1.49547H28.192C24.2479 1.49547 22.1259 2.84905 19.5195 7.3999L5.09216 32.6863C2.48578 37.2371 2.01294 39.4659 3.43146 43.1415L9.02479 57.3425H9.33617C9.02479 55.6622 10.4433 52.64 12.0117 49.9211H12.0233Z"/>
+        <path d="M53.6666 49.9215C55.2466 52.6287 56.6651 55.6626 56.3422 57.3429H56.6536L62.3277 43.1419C63.8269 39.4662 63.0427 36.7591 60.667 32.6867L58.222 28.4625C55.6157 23.9117 53.4937 22.5581 49.5495 22.5581H35.9064V22.8732C37.4056 23.2699 39.6891 25.7437 41.2691 28.4625L53.6436 49.9215H53.6666Z"/>
+        <path d="M56.9318 6.12801C56.5973 5.83629 56.3205 5.83629 55.9745 6.12801L51.0847 10.3288C50.5196 10.8072 50.2082 11.1689 49.943 11.6707H49.8738V7.08485C49.8738 6.44307 50.139 5.84795 50.6349 5.42788L54.3946 2.20728C55.8823 0.923707 57.0356 0.912038 58.5463 2.20728L62.306 5.42788C62.7903 5.84795 63.0671 6.4314 63.0671 7.08485V11.6707H62.9979C62.7327 11.1689 62.4213 10.8072 61.8562 10.3288L56.9664 6.13968L56.9318 6.12801Z"/>
+      </svg>
+      <span style="font-family:'Montserrat',sans-serif;font-size:22px;font-weight:600;color:white;margin-left:15px;padding-left:15px;border-left:1px solid rgba(255,255,255,0.4);letter-spacing:1px;line-height:1;">OPERATIONS</span>
+    </div></a>
 
-        <!-- ALWAYS-VISIBLE ACTION BUTTONS (right of logo, never collapse) -->
-        <div class="navbar-always-actions">
-            <button id="cal-nav-btn" class="btn-mini" type="button" onclick="toggleView()">&#9654; View Timeline</button>
-            <button type="button" class="btn-mini-lime" onclick="exportToExcel()">
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Export Excel
-            </button>
-        </div>
-
-        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
-        </button>
-
-        <!-- COLLAPSIBLE: nav links + site links -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/projects/hajr-ipp/" target="_blank">Who we are</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/acwa-operations/" target="_blank">What we do</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://hcm23.sapsf.com/sf/home?bplte_company=acwapowerc" target="_blank">SuccessFactors</a></li>
-                <li class="nav-item nav-actions">
-                    <a href="https://apnomac.synergilife.dnv.com/" class="btn-sap" target="_blank">Synergi Life</a>
-                    <a href="https://flpnwc-fpg6i1pyim.dispatcher.sa1.hana.ondemand.com/sites?siteId=bd8f998f-0949-4d95-b233-fbf3aa884a5c#Shell-home" target="_blank" class="btn-sap">S4HANA</a>
-                    <a href="https://acwapi-my.sharepoint.com/:x:/g/personal/m_algarni_nomac_com/IQBX9-3015HcT6C0FTLuB_lOAfVqMX5BJTYTqFMVOwZ7nwE?e=dQHZWw" target="_blank" class="btn-mini-lime"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Planned Leaves</a>
-                </li>
-            </ul>
-        </div>
+    <!-- Always-visible: Timeline + Export -->
+    <div class="navbar-always-actions">
+      <button id="cal-nav-btn" class="btn-mini" type="button" onclick="toggleView()">&#9654; View Timeline</button>
+      <button type="button" class="btn-mini-lime" onclick="exportToExcel()">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Excel
+      </button>
     </div>
+
+    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+    </button>
+
+    <!-- Collapsible nav -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+        <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/projects/hajr-ipp/" target="_blank">Who we are</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://www.acwapower.com/en/what-we-do/acwa-operations/" target="_blank">What we do</a></li>
+        <li class="nav-item nav-actions">
+          <a href="https://apnomac.synergilife.dnv.com/" class="btn-sap" target="_blank">Synergi Life</a>
+          <a href="https://flpnwc-fpg6i1pyim.dispatcher.sa1.hana.ondemand.com/sites?siteId=bd8f998f-0949-4d95-b233-fbf3aa884a5c#Shell-home" target="_blank" class="btn-sap">S4HANA</a>
+          <a href="https://hcm23.sapsf.com/sf/home?bplte_company=acwapowerc&_s.crb=TrlyOy5b1d%2bPkYfrJ9rGZJQbcNYZ6rDPMQ9sOvJ7Kkk%3d" target="_blank" class="btn-sap">SuccessFactors</a>
+          <a href="https://acwapi-my.sharepoint.com/:x:/g/personal/m_algarni_nomac_com/IQBX9-3015HcT6C0FTLuB_lOAfVqMX5BJTYTqFMVOwZ7nwE?e=dQHZWw" target="_blank" class="btn-mini-lime">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Planned Leaves
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
-    <div class="hero-text">
-        Advancing <span style="color: var(--brand-lime); font-weight: 700;">life</span><br>
-        through energy,<br>
-        <span style="color: var(--brand-lime); font-weight: 700;">water</span> and <span style="color: var(--brand-lime); font-weight: 700;">ingenuity</span>.
-        <div style="margin-top: 25px; font-size: 24px; font-weight: 400; opacity: 0.9; border-left: 4px solid var(--brand-lime); padding-left: 15px;">
-            Safe, reliable power and water.
-        </div>
+  <div class="hero-text">
+    Advancing <span style="color:var(--brand-lime);font-weight:700;">life</span><br>
+    through energy,<br>
+    <span style="color:var(--brand-lime);font-weight:700;">water</span> and <span style="color:var(--brand-lime);font-weight:700;">ingenuity</span>.
+    <div style="margin-top:25px;font-size:24px;font-weight:400;opacity:0.9;border-left:4px solid var(--brand-lime);padding-left:15px;">
+      Safe, reliable power and water.
     </div>
+  </div>
 </div>
 
 <div id="toast"></div>
 
+<!-- PIN DIALOG -->
+<dialog id="pin-dialog">
+  <div class="p-6 bg-white rounded-2xl">
+    <div class="text-center mb-4">
+      <div class="text-2xl mb-1">🔐</div>
+      <h3 class="font-extrabold text-gray-800 text-lg">Admin Access</h3>
+      <p class="text-xs text-gray-400 mt-1">Enter PIN to continue</p>
+    </div>
+    <div class="pin-display mb-4" id="pin-display">&#x25CF;&#x25CF;&#x25CF;&#x25CF;</div>
+    <p id="pin-error" class="text-center text-red-500 text-xs font-bold mb-3 h-4"></p>
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex gap-3">
+        <button class="pin-btn" onclick="pinInput('1')">1</button>
+        <button class="pin-btn" onclick="pinInput('2')">2</button>
+        <button class="pin-btn" onclick="pinInput('3')">3</button>
+      </div>
+      <div class="flex gap-3">
+        <button class="pin-btn" onclick="pinInput('4')">4</button>
+        <button class="pin-btn" onclick="pinInput('5')">5</button>
+        <button class="pin-btn" onclick="pinInput('6')">6</button>
+      </div>
+      <div class="flex gap-3">
+        <button class="pin-btn" onclick="pinInput('7')">7</button>
+        <button class="pin-btn" onclick="pinInput('8')">8</button>
+        <button class="pin-btn" onclick="pinInput('9')">9</button>
+      </div>
+      <div class="flex gap-3">
+        <button class="pin-btn zero" onclick="pinInput('0')">0</button>
+        <button class="pin-btn del" onclick="pinDelete()">⌫</button>
+      </div>
+    </div>
+    <button onclick="closePinDialog()" class="mt-5 w-full py-2 text-sm text-gray-400 hover:text-gray-600 font-bold transition">Cancel</button>
+  </div>
+</dialog>
+
 <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 overlap-content">
-  
   <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow border border-gray-200" id="header-container">
     <div>
       <h2 class="text-xl font-extrabold text-gray-800">System Status</h2>
       <p class="text-sm font-bold text-gray-500 mt-0.5" id="conflict-banner">Loading Database...</p>
     </div>
   </div>
-  
   <div id="card-view" class="space-y-10"></div>
-  
   <div id="timeline-view" class="hidden pb-8">
     <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-3 flex flex-wrap gap-4 items-center">
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFF2CC;"></div> Day Shift</span>
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#DDEBF7;"></div> Night Shift</span>
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded border border-gray-300" style="background:#f3f4f6;"></div> Off</span>
-        <div class="w-px h-5 bg-gray-300 mx-1"></div>
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFFF00;"></div> Planned Leave</span>
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#C4B5FD;"></div> SAP Leave</span>
-        <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#EF4444;"></div> Conflict</span>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFF2CC;"></div> Day Shift</span>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#DDEBF7;"></div> Night Shift</span>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded border border-gray-300" style="background:#f3f4f6;"></div> Off</span>
+      <div class="w-px h-5 bg-gray-300 mx-1"></div>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#FFFF00;"></div> Planned Leave</span>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#C4B5FD;"></div> SAP Leave</span>
+      <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5"><div class="w-3 h-3 rounded" style="background:#EF4444;"></div> Conflict</span>
     </div>
-    
     <div class="timeline-container-wrapper custom-scrollbar">
-        <div id="timeline-container"></div>
+      <div id="timeline-container"></div>
     </div>
   </div>
 </div>
@@ -390,7 +312,6 @@
   <div class="p-6 bg-white">
     <h2 class="text-xl font-extrabold mb-4 text-gray-800" id="modal-title">Edit Leaves</h2>
     <input type="hidden" id="edit-id">
-    
     <div class="space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-100 mb-4">
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-2">
@@ -407,7 +328,6 @@
         <input type="text" id="edit-role" disabled class="mt-1 block w-full rounded-md bg-gray-100 text-gray-600 font-bold shadow-none p-2 border-transparent cursor-not-allowed text-sm">
       </div>
     </div>
-
     <div class="space-y-4">
       <div class="border-t pt-4 border-gray-200">
         <p class="text-[11px] font-bold text-[#9273DA] uppercase tracking-wider mb-2">Add New Leave</p>
@@ -440,16 +360,77 @@
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-
 <script>
-  // ── NAVBAR SCROLL LOGIC ──
+  // ── NAVBAR SCROLL ──
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('.acwa-navbar');
-    if (window.scrollY > 50) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
+    nav.classList.toggle('scrolled', window.scrollY > 50);
   });
 
-  // ── 1. LOCAL DATABASE & INITIALIZATION ──
+  // ── PIN SYSTEM ──
+  const CORRECT_PIN = '6568';
+  let pinBuffer = '';
+  let pinCallback = null;
+  let adminUnlocked = false;
+
+  function openPinDialog(callback) {
+    pinBuffer = '';
+    pinCallback = callback;
+    document.getElementById('pin-display').innerHTML = '&#x25CF;&#x25CF;&#x25CF;&#x25CF;';
+    document.getElementById('pin-error').textContent = '';
+    document.getElementById('pin-dialog').showModal();
+  }
+  function closePinDialog() {
+    pinBuffer = '';
+    document.getElementById('pin-dialog').close();
+  }
+  function pinInput(digit) {
+    if (pinBuffer.length >= 4) return;
+    pinBuffer += digit;
+    const dots = '●'.repeat(pinBuffer.length) + '○'.repeat(4 - pinBuffer.length);
+    document.getElementById('pin-display').textContent = dots;
+    if (pinBuffer.length === 4) {
+      setTimeout(() => {
+        if (pinBuffer === CORRECT_PIN) {
+          closePinDialog();
+          adminUnlocked = true;
+          if (pinCallback) pinCallback();
+        } else {
+          document.getElementById('pin-error').textContent = '❌ Incorrect PIN';
+          document.getElementById('pin-display').textContent = '○○○○';
+          pinBuffer = '';
+        }
+      }, 300);
+    }
+  }
+  function pinDelete() {
+    pinBuffer = pinBuffer.slice(0, -1);
+    const dots = '●'.repeat(pinBuffer.length) + '○'.repeat(4 - pinBuffer.length);
+    document.getElementById('pin-display').textContent = dots;
+  }
+
+  // ── LOCK STATE ──
+  function isEditingLocked() {
+    return localStorage.getItem('qipp_editing_locked') === 'true';
+  }
+  function setEditingLock(locked) {
+    localStorage.setItem('qipp_editing_locked', locked ? 'true' : 'false');
+  }
+  function toggleGlobalLock() {
+    if (isEditingLocked()) {
+      // Unlock
+      setEditingLock(false);
+      showToast('✅ Editing UNLOCKED for all cards', 'success');
+    } else {
+      // Lock + save
+      saveData();
+      setEditingLock(true);
+      showToast('🔒 Editing LOCKED — data saved', 'saving');
+    }
+    renderAll();
+  }
+
+  // ── DATA ──
   const initialDB = {
     "roster": [
       { "id": 1, "name": "Izhar Ali", "empId": "500440", "crew": "C", "role": "Local Operator", "color": "crew-lightviolet", "leaves": [{ "start": "2026-04-21", "end": "2026-05-02", "type": "Applied on SAP" }], "conflict": false, "conflictWith": [] },
@@ -512,46 +493,32 @@
 
   function loadData() {
     const saved = localStorage.getItem('qipp_roster_data');
-    if (saved) {
-        roster = JSON.parse(saved);
-        showToast('Loaded saved data!', 'success');
-    } else {
-        roster = JSON.parse(JSON.stringify(initialDB.roster));
-        showToast('Loaded default database.', 'success');
-    }
+    if (saved) { roster = JSON.parse(saved); showToast('Loaded saved data!', 'success'); }
+    else { roster = JSON.parse(JSON.stringify(initialDB.roster)); showToast('Loaded default database.', 'success'); }
     renderAll();
   }
-
   function saveData() {
     localStorage.setItem('qipp_roster_data', JSON.stringify(roster));
     showToast('Changes Saved!', 'success');
   }
 
-  // ── GLOBALS & MAPS ──
   const crewOrder = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'General': 5 };
   const roleOrder = { 'Shift in Charge Engineer': 1, 'Shift in Charge': 1, 'Supervisor': 2, 'CCR Operator': 3, 'Local Operator': 4, 'Filed Operator': 5, 'Field Operator': 5 };
-
-  const crewColorMap = {
-    'crew-red':'d32f2f','crew-yellow':'f9a825','crew-green':'2e7d32',
-    'crew-lightblue':'0288d1','crew-lightviolet':'7b1fa2',
-    'crew-lightorange':'ef6c00','crew-grey':'616161'
-  };
-
+  const crewColorMap = { 'crew-red':'d32f2f','crew-yellow':'f9a825','crew-green':'2e7d32','crew-lightblue':'0288d1','crew-lightviolet':'7b1fa2','crew-lightorange':'ef6c00','crew-grey':'616161' };
   const shiftCycles = {
-      'A': ['O', 'O', 'O', 'O', 'D', 'D', 'N', 'N'],
-      'B': ['D', 'D', 'N', 'N', 'O', 'O', 'O', 'O'],
-      'C': ['N', 'N', 'O', 'O', 'O', 'O', 'D', 'D'],
-      'D': ['O', 'O', 'D', 'D', 'N', 'N', 'O', 'O'],
-      'General': ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    'A': ['O','O','O','O','D','D','N','N'],
+    'B': ['D','D','N','N','O','O','O','O'],
+    'C': ['N','N','O','O','O','O','D','D'],
+    'D': ['O','O','D','D','N','N','O','O'],
+    'General': ['O','O','O','O','O','O','O','O']
   };
 
   function getDaysSinceBase(dateStr) {
-      const base = new Date('2026-01-01T00:00:00Z');
-      const current = new Date(dateStr + 'T00:00:00Z');
-      return Math.floor((current - base) / (1000 * 60 * 60 * 24));
+    const base = new Date('2026-01-01T00:00:00Z');
+    const current = new Date(dateStr + 'T00:00:00Z');
+    return Math.floor((current - base) / (1000 * 60 * 60 * 24));
   }
 
-  // ── UI HELPERS ──
   function showToast(msg, type='success', duration=2500) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -559,17 +526,14 @@
     clearTimeout(t._t);
     t._t = setTimeout(() => t.className = '', duration);
   }
-
   function formatNoYear(d) {
     if (!d) return '';
     const p = d.split('-');
     if (p.length === 3) return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1],10)-1] + ' ' + parseInt(p[2],10);
     return d;
   }
-
   function getInitials(name) { return name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase(); }
 
-  // ── CONFLICTS ──
   function calculateConflicts() {
     roster.forEach(p => { p.conflict = false; p.conflictWith = []; });
     let count = 0;
@@ -595,10 +559,10 @@
   }
 
   function unlockAutoScheduler() {
-      document.querySelectorAll('.suggest-btn').forEach(b => b.style.display = 'inline-block');
-      showToast('Admin Mode: Auto-Scheduler Unlocked!', 'success');
-      document.getElementById('header-container').classList.add('magic-resolving');
-      setTimeout(()=> document.getElementById('header-container').classList.remove('magic-resolving'), 1500);
+    document.querySelectorAll('.suggest-btn').forEach(b => b.style.display = 'inline-block');
+    showToast('Admin Mode: Auto-Scheduler Unlocked!', 'success');
+    document.getElementById('header-container').classList.add('magic-resolving');
+    setTimeout(()=> document.getElementById('header-container').classList.remove('magic-resolving'), 1500);
   }
 
   function suggestLeave(personId) {
@@ -607,15 +571,13 @@
     const peers = roster.filter(x => x.id !== personId && x.crew === target.crew && x.role === target.role);
     let badDates = new Set();
     peers.forEach(peer => peer.leaves.forEach(lv => {
-        let s = new Date(lv.start).getTime(), e = new Date(lv.end).getTime();
-        for (let d = s; d <= e; d += 86400000) badDates.add(d);
+      let s = new Date(lv.start).getTime(), e = new Date(lv.end).getTime();
+      for (let d = s; d <= e; d += 86400000) badDates.add(d);
     }));
     let startSearch = new Date('2026-04-01').getTime(), endSearch = new Date('2026-12-15').getTime(), bestStart = null;
     for (let d = startSearch; d <= endSearch; d += 86400000) {
       let hasConflict = false;
-      for (let i = 0; i < 14; i++) {
-        if (badDates.has(d + (i * 86400000))) { hasConflict = true; break; }
-      }
+      for (let i = 0; i < 14; i++) { if (badDates.has(d + (i * 86400000))) { hasConflict = true; break; } }
       if (!hasConflict) { bestStart = d; break; }
     }
     if (bestStart) {
@@ -631,7 +593,6 @@
     }
   }
 
-  // ── RENDER ──
   function renderAll() { calculateConflicts(); renderCards(); renderTimeline(); }
 
   function toggleView() {
@@ -645,23 +606,21 @@
   function renderCards() {
     const container = document.getElementById('card-view');
     container.innerHTML = '';
-    
-    const sortedForCards = [...roster].sort((a, b) => {
-        if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
-        return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+    const locked = isEditingLocked();
+    const sorted = [...roster].sort((a, b) => {
+      if (a.crew !== b.crew) return (crewOrder[a.crew]||99) - (crewOrder[b.crew]||99);
+      return (roleOrder[a.role]||99) - (roleOrder[b.role]||99);
     });
-
     ['A','B','C','D','General'].forEach(crew => {
-      const members = sortedForCards.filter(p => p.crew === crew);
+      const members = sorted.filter(p => p.crew === crew);
       if (!members.length) return;
       const section = document.createElement('div');
       section.className = "mb-8";
-      // COMPACT GRID
       section.innerHTML = `<h2 class="text-xl font-extrabold mb-3 text-gray-800 border-b-2 border-gray-100 pb-2">Crew ${crew}</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3"></div>`;
       const grid = section.querySelector('div');
-      
       members.forEach(p => {
         const hex = crewColorMap[p.color] || '000';
+        const isAlgarni = p.name.toLowerCase().includes('algarni');
         const conflictBadge = p.conflict ? `<span class="badge badge-conflict absolute top-2 right-2 shadow-sm text-[10px]">⚠️ Conflict</span>` : '';
         const leavesHtml = p.leaves.map(l => `
           <div class="bg-gray-50 rounded-md p-2 text-[10px] mb-1.5 border border-gray-100 shadow-sm">
@@ -675,10 +634,29 @@
               <span class="text-gray-800">${formatNoYear(l.end)}</span>
             </div>
           </div>`).join('');
-        
-        const isAlgarni = p.name.toLowerCase().includes('algarni');
-        const secretTrigger = isAlgarni ? `ondblclick="unlockAutoScheduler()"` : '';
-        const cursorClass   = isAlgarni ? 'cursor-pointer ring-4 ring-[#9273DA]' : ''; 
+
+        // Admin panel for Algarni (only when admin is unlocked)
+        const adminPanelHtml = isAlgarni && adminUnlocked ? `
+          <div class="admin-panel mt-2">
+            <p class="text-[10px] font-extrabold text-[#7b1fa2] uppercase tracking-wider mb-2">⚙️ Admin Controls</p>
+            <button onclick="toggleGlobalLock()" class="w-full py-1.5 px-3 rounded-lg text-[11px] font-bold transition ${locked
+              ? 'bg-green-100 text-green-700 border border-green-300 hover:bg-green-200'
+              : 'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200'}">
+              ${locked ? '🔓 Unlock Editing for All' : '🔒 Lock Editing & Save'}
+            </button>
+            <p class="text-[9px] text-gray-400 mt-1.5 text-center">${locked ? 'Currently: Editing is LOCKED' : 'Currently: Editing is OPEN'}</p>
+          </div>` : '';
+
+        // Avatar — Algarni dblclick opens PIN
+        const avatarAttrs = isAlgarni
+          ? `ondblclick="openPinDialog(() => { adminUnlocked=true; renderAll(); showToast('Admin unlocked!','success'); })" title="Double-click for Admin Access" style="cursor:pointer;"`
+          : '';
+        const avatarRing = isAlgarni ? 'ring-4 ring-[#9273DA]' : '';
+
+        // Edit button — hidden if locked (unless Algarni)
+        const editBtn = (!locked || isAlgarni)
+          ? `<button onclick="${isAlgarni ? `adminUnlocked ? handleEditPerson(${p.id}) : openPinDialog(()=>{ adminUnlocked=true; handleEditPerson(${p.id}); })` : `handleEditPerson(${p.id})`}" class="text-gray-400 hover:text-blue-600 transition font-bold text-[10px] bg-gray-50 px-2.5 py-1 rounded border border-gray-200 hover:bg-blue-50">&#9998; Edit Leaves</button>`
+          : `<span class="text-[10px] text-gray-300 font-bold italic">🔒 Locked</span>`;
 
         grid.innerHTML += `
           <div class="sap-card transition hover:shadow-md">
@@ -686,19 +664,18 @@
             ${conflictBadge}
             <div class="p-3 pt-4 relative flex-grow flex flex-col">
               <div class="flex items-center space-x-3 mb-2">
-                <div ${secretTrigger} class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm ${cursorClass} transition shadow-inner" style="background-color:#${hex}" title="${isAlgarni ? 'Double click for Admin Tools' : ''}">${getInitials(p.name)}</div>
+                <div ${avatarAttrs} class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm ${avatarRing} transition shadow-inner" style="background-color:#${hex}">${getInitials(p.name)}</div>
                 <div class="overflow-hidden">
                   <h3 class="font-extrabold text-sm leading-tight truncate" style="color:#${hex}" title="${p.name}">${p.name}</h3>
-                  <p class="text-[10px] font-bold text-gray-500 mt-0.5 truncate" title="${p.role}">${p.role}</p>
-                  <p class="text-[9px] text-gray-400 font-mono font-bold mt-0.5">ID: ${p.empId || 'N/A'}</p>
+                  <p class="text-[10px] font-bold text-gray-500 mt-0.5 truncate">${p.role}</p>
+                  <p class="text-[9px] text-gray-400 font-mono font-bold mt-0.5">ID: ${p.empId||'N/A'}</p>
                 </div>
               </div>
-              <div class="max-h-24 overflow-y-auto pr-1 mt-1 custom-scrollbar flex-grow">
-                ${leavesHtml}
-              </div>
+              <div class="max-h-24 overflow-y-auto pr-1 mt-1 custom-scrollbar flex-grow">${leavesHtml}</div>
+              ${adminPanelHtml}
               <div class="flex justify-end mt-2 pt-2 border-t border-gray-100">
-                <button onclick="suggestLeave(${p.id})" class="suggest-btn text-gray-400 hover:text-[#9273DA] transition mr-2 text-sm" style="display:none;" title="Auto-Suggest Best Dates">✨</button>
-                <button onclick="handleEditPerson(${p.id})" class="text-gray-400 hover:text-blue-600 transition font-bold text-[10px] bg-gray-50 px-2.5 py-1 rounded border border-gray-200 hover:bg-blue-50" title="Edit">&#9998; Edit Leaves</button>
+                <button onclick="suggestLeave(${p.id})" class="suggest-btn text-gray-400 hover:text-[#9273DA] transition mr-2 text-sm" style="display:none;" title="Auto-Suggest">✨</button>
+                ${editBtn}
               </div>
             </div>
           </div>`;
@@ -707,67 +684,46 @@
     });
   }
 
-  // ULTIMATE FROZEN TIMELINE 
   function renderTimeline() {
     const container = document.getElementById('timeline-container');
-    let html = `<div class="timeline-grid-interactive"><div class="timeline-header-corner">EMPLOYEE</div>`; 
-    
+    let html = `<div class="timeline-grid-interactive"><div class="timeline-header-corner">EMPLOYEE</div>`;
     let startDate = new Date("2026-01-01T00:00:00Z");
     const dates = [];
-
-    // Header Row (365 days)
     for(let i=0; i<365; i++) {
-        let d = new Date(startDate);
-        d.setUTCDate(d.getUTCDate() + i);
-        dates.push(d);
-        html += `<div class="timeline-header-date">${d.getUTCDate()}<br><span class="font-normal opacity-70">${d.toLocaleDateString('en-US', {weekday:'narrow', timeZone:'UTC'})}</span></div>`;
+      let d = new Date(startDate); d.setUTCDate(d.getUTCDate() + i); dates.push(d);
+      html += `<div class="timeline-header-date">${d.getUTCDate()}<br><span class="font-normal opacity-70">${d.toLocaleDateString('en-US',{weekday:'narrow',timeZone:'UTC'})}</span></div>`;
     }
-
-    const uiSortedRoster = [...roster].sort((a, b) => {
-        if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
-        return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+    const uiSorted = [...roster].sort((a,b) => {
+      if (a.crew!==b.crew) return (crewOrder[a.crew]||99)-(crewOrder[b.crew]||99);
+      return (roleOrder[a.role]||99)-(roleOrder[b.role]||99);
     });
-
-    uiSortedRoster.forEach(person => {
-        const hex = crewColorMap[person.color] || '000';
-        
-        const nameHover = person.conflict ? `title="⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')}"` : `title="${person.name}"`;
-        
-        html += `<div class="timeline-name-col" onclick="handleEditPerson(${person.id})" ${nameHover}>
-            <div class="text-[11px] font-extrabold truncate" style="color:#${hex};">${person.conflict ? '⚠️' : ''} ${person.name}</div>
-            <div class="text-[9px] font-bold text-gray-400">Crew ${person.crew}</div>
-        </div>`;
-        
-        const cycle = shiftCycles[person.crew] || shiftCycles['General'];
-
-        // Cells Row
-        dates.forEach(date => {
-            const dateStr = date.toISOString().slice(0, 10);
-            const diffInDays = getDaysSinceBase(dateStr);
-            const shift = cycle[((diffInDays % 8) + 8) % 8];
-
-            let cellColor = shift === 'D' ? '#FFF2CC' : (shift === 'N' ? '#DDEBF7' : '#F3F4F6');
-            let hoverText = `Shift: ${shift}`;
-            let extraClass = '';
-
-            person.leaves.forEach(lv => {
-                if (dateStr >= lv.start && dateStr <= lv.end) {
-                    cellColor = lv.type === 'Applied on SAP' ? '#C4B5FD' : '#FFFF00'; // Light Violet
-                    hoverText = `Leave: ${lv.type}`;
-                    
-                    if (person.conflict) {
-                        extraClass = 'ring-2 ring-red-600 animate-pulse'; 
-                        hoverText = `⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')} | ${lv.type}`;
-                        cellColor = '#EF4444'; // Bright Red
-                    }
-                }
-            });
-
-            // TEXT REMOVED FROM INSIDE CELL
-            html += `<div class="timeline-cell ${extraClass}" style="background-color: ${cellColor};" title="${dateStr} | ${hoverText}"></div>`;
+    uiSorted.forEach(person => {
+      const hex = crewColorMap[person.color]||'000';
+      const nameHover = person.conflict ? `title="⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')}"` : `title="${person.name}"`;
+      const locked = isEditingLocked();
+      const clickAction = locked && !person.name.toLowerCase().includes('algarni') ? '' : `onclick="handleEditPerson(${person.id})"`;
+      html += `<div class="timeline-name-col" ${clickAction} ${nameHover}>
+        <div class="text-[11px] font-extrabold truncate" style="color:#${hex};">${person.conflict?'⚠️':''} ${person.name}</div>
+        <div class="text-[9px] font-bold text-gray-400">Crew ${person.crew}</div>
+      </div>`;
+      const cycle = shiftCycles[person.crew]||shiftCycles['General'];
+      dates.forEach(date => {
+        const dateStr = date.toISOString().slice(0,10);
+        const diffInDays = getDaysSinceBase(dateStr);
+        const shift = cycle[((diffInDays%8)+8)%8];
+        let cellColor = shift==='D'?'#FFF2CC':(shift==='N'?'#DDEBF7':'#F3F4F6');
+        let hoverText = `Shift: ${shift}`;
+        let extraClass = '';
+        person.leaves.forEach(lv => {
+          if (dateStr>=lv.start && dateStr<=lv.end) {
+            cellColor = lv.type==='Applied on SAP'?'#C4B5FD':'#FFFF00';
+            hoverText = `Leave: ${lv.type}`;
+            if (person.conflict) { extraClass='ring-2 ring-red-600 animate-pulse'; hoverText=`⚠️ CONFLICT WITH: ${person.conflictWith.join(', ')} | ${lv.type}`; cellColor='#EF4444'; }
+          }
         });
+        html += `<div class="timeline-cell ${extraClass}" style="background-color:${cellColor};" title="${dateStr} | ${hoverText}"></div>`;
+      });
     });
-
     html += `</div>`;
     container.innerHTML = html;
   }
@@ -778,50 +734,43 @@
     const end   = document.getElementById('edit-end').value;
     const idVal = document.getElementById('edit-id').value;
     const warn  = document.getElementById('edit-conflict-warning');
-    
-    // We fetch the crew/role straight from the person, not the disabled inputs
-    const person = roster.find(x => String(x.id) === String(idVal));
+    const person = roster.find(x => String(x.id)===String(idVal));
     if (!start||!end||!person) { warn.textContent=''; return; }
-    
-    const sN = new Date(start), eN = new Date(end);
-    const hits = [];
+    const sN=new Date(start), eN=new Date(end), hits=[];
     roster.forEach(p => {
       if (idVal && String(p.id)===String(idVal)) return;
       if (p.crew===person.crew && p.role===person.role)
         p.leaves.forEach(l => { if (sN<=new Date(l.end) && new Date(l.start)<=eN) hits.push(p.name); });
     });
-    warn.innerHTML = hits.length ? '⚠️ <b>WARNING:</b> Dates conflict with ' + [...new Set(hits)].join(', ') : '';
+    warn.innerHTML = hits.length ? '⚠️ <b>WARNING:</b> Dates conflict with '+[...new Set(hits)].join(', ') : '';
   }
 
   function handleEditPerson(id) {
-      const p = roster.find(x => x.id === id);
-      if (!p) return;
-      
-      document.getElementById('edit-id').value    = p.id;
-      document.getElementById('edit-name').value  = p.name;
-      document.getElementById('edit-empid').value = p.empId || 'N/A';
-      document.getElementById('edit-role').value  = p.role + ' (Crew ' + p.crew + ')';
-      
-      document.getElementById('edit-start').value = '';
-      document.getElementById('edit-end').value   = '';
-      document.getElementById('edit-conflict-warning').textContent = '';
-      
-      document.getElementById('existing-leaves-list').innerHTML = p.leaves.map((l,i) => `
-        <div class="flex justify-between items-center bg-white p-2.5 rounded-md border border-gray-200 text-[11px] font-bold shadow-sm">
-          <span>${formatNoYear(l.start)} &rarr; ${formatNoYear(l.end)} <span class="text-gray-400 ml-1 font-normal">(${l.type})</span></span>
-          <button onclick="removeLeave(${p.id},${i})" class="text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition">Remove</button>
-        </div>`).join('');
-        
-      document.getElementById('edit-modal').showModal();
+    const locked = isEditingLocked();
+    const p = roster.find(x => x.id===id);
+    if (!p) return;
+    const isAlgarni = p.name.toLowerCase().includes('algarni');
+    // Non-Algarni cards blocked when locked
+    if (locked && !isAlgarni) { showToast('🔒 Editing is locked', 'error'); return; }
+    document.getElementById('edit-id').value    = p.id;
+    document.getElementById('edit-name').value  = p.name;
+    document.getElementById('edit-empid').value = p.empId||'N/A';
+    document.getElementById('edit-role').value  = p.role+' (Crew '+p.crew+')';
+    document.getElementById('edit-start').value = '';
+    document.getElementById('edit-end').value   = '';
+    document.getElementById('edit-conflict-warning').textContent = '';
+    document.getElementById('existing-leaves-list').innerHTML = p.leaves.map((l,i) => `
+      <div class="flex justify-between items-center bg-white p-2.5 rounded-md border border-gray-200 text-[11px] font-bold shadow-sm">
+        <span>${formatNoYear(l.start)} &rarr; ${formatNoYear(l.end)} <span class="text-gray-400 ml-1 font-normal">(${l.type})</span></span>
+        <button onclick="removeLeave(${p.id},${i})" class="text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition">Remove</button>
+      </div>`).join('');
+    document.getElementById('edit-modal').showModal();
   }
 
   function removeLeave(personId, idx) {
     const p = roster.find(x => x.id===personId);
     if (p && confirm('Delete this leave period?')) {
-      p.leaves.splice(idx,1);
-      saveData();
-      handleEditPerson(personId);
-      renderAll();
+      p.leaves.splice(idx,1); saveData(); handleEditPerson(personId); renderAll();
     }
   }
 
@@ -829,243 +778,162 @@
     const idVal = document.getElementById('edit-id').value;
     const start = document.getElementById('edit-start').value;
     const end   = document.getElementById('edit-end').value;
-    
     const newLeave = (start&&end) ? {start, end, type: document.getElementById('edit-type').value} : null;
-    
     if (idVal) {
-      const i = roster.findIndex(p => String(p.id) === String(idVal));
-      if (i !== -1) {
-        if (newLeave) {
-          roster[i].leaves.push(newLeave);
-          roster[i].leaves.sort((a,b) => new Date(a.start)-new Date(b.start));
-        }
+      const i = roster.findIndex(p => String(p.id)===String(idVal));
+      if (i!==-1 && newLeave) {
+        roster[i].leaves.push(newLeave);
+        roster[i].leaves.sort((a,b) => new Date(a.start)-new Date(b.start));
       }
     }
-    
-    saveData(); 
-    closeModal();
-    renderAll();
+    saveData(); closeModal(); renderAll();
   }
 
   function closeModal() { document.getElementById('edit-modal').close(); }
 
-  // ── DYNAMIC EXCEL EXPORTER ─────────
+  // ── EXCEL EXPORT ──
   async function exportToExcel() {
     try {
-        showToast('Generating 2026 & 2027 Excel Dashboards...', 'saving', 5000);
-        const workbook = new ExcelJS.Workbook();
-
-        const sortedRoster = [...roster].sort((a, b) => {
-            if (a.crew !== b.crew) return (crewOrder[a.crew] || 99) - (crewOrder[b.crew] || 99);
-            return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+      showToast('Generating Excel...', 'saving', 5000);
+      const workbook = new ExcelJS.Workbook();
+      const sortedRoster = [...roster].sort((a,b) => {
+        if (a.crew!==b.crew) return (crewOrder[a.crew]||99)-(crewOrder[b.crew]||99);
+        return (roleOrder[a.role]||99)-(roleOrder[b.role]||99);
+      });
+      const borderStyle = { style:'thin', color:{argb:'FFD9D9D9'} };
+      const gridBorder = { top:borderStyle, left:borderStyle, bottom:borderStyle, right:borderStyle };
+      const fills = {
+        header:  {type:'pattern',pattern:'solid',fgColor:{argb:'FFE7E6E6'}},
+        weekend: {type:'pattern',pattern:'solid',fgColor:{argb:'FFF2F2F2'}},
+        day:     {type:'pattern',pattern:'solid',fgColor:{argb:'FFFFF2CC'}},
+        night:   {type:'pattern',pattern:'solid',fgColor:{argb:'FFDDEBF7'}},
+        sap:     {type:'pattern',pattern:'solid',fgColor:{argb:'FFC4B5FD'}},
+        plan:    {type:'pattern',pattern:'solid',fgColor:{argb:'FFFFFF00'}}
+      };
+      const fonts = {
+        day:   {bold:true,color:{argb:'FFD6B656'}},
+        night: {bold:true,color:{argb:'FF6C8EBF'}},
+        black: {bold:true,color:{argb:'FF000000'}}
+      };
+      const nameColors = {
+        'crew-red':'FFFF0000','crew-yellow':'FFD4AF37','crew-green':'FF00B050',
+        'crew-lightblue':'FF0070C0','crew-lightviolet':'FF7030A0',
+        'crew-lightorange':'FFED7D31','crew-grey':'FF808080'
+      };
+      function buildSheet(year) {
+        const ws = workbook.addWorksheet(`${year} Roster`, { views:[{state:'frozen',xSplit:4,ySplit:4}] });
+        ws.columns = [{width:14},{width:35},{width:14},{width:25}];
+        ws.mergeCells('A1:D1');
+        const titleCell = ws.getCell('A1');
+        titleCell.value = `${year} OPERATIONS & LEAVE ROSTER`;
+        titleCell.font = {size:14,bold:true};
+        titleCell.alignment = {horizontal:'center',vertical:'middle'};
+        const legend = [
+          {range:'E1:F1',text:' S = SAP',fill:fills.sap},
+          {range:'H1:I1',text:' P = Plan',fill:fills.plan},
+          {range:'K1:M1',text:' D = Day Shift',fill:fills.day},
+          {range:'O1:R1',text:' N = Night Shift',fill:fills.night}
+        ];
+        legend.forEach(item => {
+          ws.mergeCells(item.range);
+          const cell = ws.getCell(item.range.split(':')[0]);
+          cell.value=item.text; cell.fill=item.fill; cell.font=fonts.black;
+          cell.border=gridBorder; cell.alignment={horizontal:'center',vertical:'middle'};
         });
-
-        const borderStyle = { style: 'thin', color: { argb: 'FFD9D9D9' } };
-        const gridBorder = { top: borderStyle, left: borderStyle, bottom: borderStyle, right: borderStyle };
-        
-        const fills = {
-            header: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE7E6E6' } },
-            weekend: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } },
-            day: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF2CC' } },
-            night: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } },
-            sap: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC4B5FD' } }, 
-            plan: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } }
-        };
-
-        const fonts = {
-            day: { bold: true, color: { argb: 'FFD6B656' } },
-            night: { bold: true, color: { argb: 'FF6C8EBF' } },
-            black: { bold: true, color: { argb: 'FF000000' } }
-        };
-
-        const nameColors = {
-            'crew-red': 'FFFF0000', 'crew-yellow': 'FFD4AF37', 'crew-green': 'FF00B050',
-            'crew-lightblue': 'FF0070C0', 'crew-lightviolet': 'FF7030A0', 'crew-lightorange': 'FFED7D31',
-            'crew-grey': 'FF808080'
-        };
-
-        function buildSheet(year) {
-            const ws = workbook.addWorksheet(`${year} Roster`, {
-                views: [{ state: 'frozen', xSplit: 4, ySplit: 4 }] 
-            });
-
-            ws.columns = [{ width: 14 }, { width: 35 }, { width: 14 }, { width: 25 }];
-            
-            ws.mergeCells('A1:D1');
-            const titleCell = ws.getCell('A1');
-            titleCell.value = `${year} OPERATIONS & LEAVE ROSTER`;
-            titleCell.font = { size: 14, bold: true };
-            titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-            const legend = [
-                { range: 'E1:F1', text: ' S = SAP', fill: fills.sap },
-                { range: 'H1:I1', text: ' P = Plan', fill: fills.plan },
-                { range: 'K1:M1', text: ' D = Day Shift', fill: fills.day },
-                { range: 'O1:R1', text: ' N = Night Shift', fill: fills.night }
-            ];
-
-            legend.forEach(item => {
-                ws.mergeCells(item.range);
-                const cell = ws.getCell(item.range.split(':')[0]);
-                cell.value = item.text;
-                cell.fill = item.fill;
-                cell.font = fonts.black;
-                cell.border = gridBorder;
-                cell.alignment = { horizontal: 'center', vertical: 'middle' };
-            });
-
-            const headerTitles = ["Emp ID", "Full Name", "Crew", "Role"];
-            headerTitles.forEach((text, i) => {
-                ws.mergeCells(3, i + 1, 4, i + 1);
-                const cell = ws.getCell(3, i + 1);
-                cell.value = text;
-                cell.font = fonts.black;
-                cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                cell.fill = fills.header;
-                cell.border = gridBorder;
-            });
-
-            const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-            const monthDays = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            
-            let colIdx = 5;
-            const dateToCol = {};
-
-            months.forEach((mName, mIdx) => {
-                const daysInMonth = monthDays[mIdx];
-                
-                ws.mergeCells(2, colIdx, 2, colIdx + daysInMonth - 1);
-                const mCell = ws.getCell(2, colIdx);
-                mCell.value = mName;
-                mCell.font = fonts.black;
-                mCell.alignment = { horizontal: 'center', vertical: 'middle' };
-                mCell.fill = fills.header;
-                mCell.border = gridBorder;
-
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const currentCol = colIdx + d - 1;
-                    ws.getColumn(currentCol).width = 3.5;
-
-                    const dateStr = `${year}-${String(mIdx+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                    dateToCol[dateStr] = currentCol;
-
-                    const dCell = ws.getCell(3, currentCol);
-                    dCell.value = d;
-                    dCell.alignment = { horizontal: 'center' };
-                    dCell.border = gridBorder;
-
-                    const currentDate = new Date(dateStr + 'T00:00:00Z');
-                    const dayOfWeek = currentDate.getUTCDay();
-
-                    const dowCell = ws.getCell(4, currentCol);
-                    dowCell.value = currentDate.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' })[0];
-                    dowCell.alignment = { horizontal: 'center' };
-                    dowCell.font = { size: 8, color: { argb: 'FF595959' } };
-                    dowCell.border = gridBorder;
-
-                    if (dayOfWeek === 5 || dayOfWeek === 6) {
-                        dCell.fill = fills.weekend;
-                        dowCell.fill = fills.weekend;
-                    }
+        ['Emp ID','Full Name','Crew','Role'].forEach((text,i) => {
+          ws.mergeCells(3,i+1,4,i+1);
+          const cell = ws.getCell(3,i+1);
+          cell.value=text; cell.font=fonts.black;
+          cell.alignment={horizontal:'center',vertical:'middle'};
+          cell.fill=fills.header; cell.border=gridBorder;
+        });
+        const isLeap = (year%4===0&&year%100!==0)||(year%400===0);
+        const monthDays = [31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31];
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        let colIdx = 5;
+        const dateToCol = {};
+        months.forEach((mName,mIdx) => {
+          const daysInMonth = monthDays[mIdx];
+          ws.mergeCells(2,colIdx,2,colIdx+daysInMonth-1);
+          const mCell = ws.getCell(2,colIdx);
+          mCell.value=mName; mCell.font=fonts.black;
+          mCell.alignment={horizontal:'center',vertical:'middle'};
+          mCell.fill=fills.header; mCell.border=gridBorder;
+          for (let d=1; d<=daysInMonth; d++) {
+            const currentCol = colIdx+d-1;
+            ws.getColumn(currentCol).width = 3.5;
+            const dateStr = `${year}-${String(mIdx+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            dateToCol[dateStr] = currentCol;
+            const dCell = ws.getCell(3,currentCol);
+            dCell.value=d; dCell.alignment={horizontal:'center'}; dCell.border=gridBorder;
+            const currentDate = new Date(dateStr+'T00:00:00Z');
+            const dayOfWeek = currentDate.getUTCDay();
+            const dowCell = ws.getCell(4,currentCol);
+            dowCell.value = currentDate.toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'})[0];
+            dowCell.alignment={horizontal:'center'};
+            dowCell.font={size:8,color:{argb:'FF595959'}};
+            dowCell.border=gridBorder;
+            if (dayOfWeek===5||dayOfWeek===6) { dCell.fill=fills.weekend; dowCell.fill=fills.weekend; }
+          }
+          colIdx += daysInMonth;
+        });
+        let rowNum = 5;
+        sortedRoster.forEach(person => {
+          const cycle = shiftCycles[person.crew]||shiftCycles['General'];
+          ws.getCell(rowNum,1).value=person.empId; ws.getCell(rowNum,1).alignment={horizontal:'center',vertical:'middle'}; ws.getCell(rowNum,1).border=gridBorder;
+          ws.getCell(rowNum,2).value=person.name; ws.getCell(rowNum,2).alignment={vertical:'middle'}; ws.getCell(rowNum,2).border=gridBorder;
+          ws.getCell(rowNum,2).font={bold:true,color:{argb:nameColors[person.color]||'FF000000'}};
+          ws.getCell(rowNum,3).value=person.crew==='General'?'General':`Crew ${person.crew}`; ws.getCell(rowNum,3).alignment={horizontal:'center',vertical:'middle'}; ws.getCell(rowNum,3).border=gridBorder;
+          ws.getCell(rowNum,4).value=person.role; ws.getCell(rowNum,4).alignment={horizontal:'center',vertical:'middle'}; ws.getCell(rowNum,4).border=gridBorder;
+          let dayCount=0;
+          for (let m=0; m<12; m++) {
+            for (let d=1; d<=monthDays[m]; d++) {
+              const dateStr=`${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+              const diffInDays=getDaysSinceBase(dateStr);
+              const shift=cycle[((diffInDays%8)+8)%8];
+              const c=5+dayCount;
+              const cell=ws.getCell(rowNum,c);
+              const currentDate=new Date(dateStr+'T00:00:00Z');
+              const isWeekend=currentDate.getUTCDay()===5||currentDate.getUTCDay()===6;
+              cell.alignment={horizontal:'center',vertical:'middle'}; cell.border=gridBorder;
+              if (shift==='D') { cell.value='D'; cell.fill=fills.day; cell.font=fonts.day; }
+              else if (shift==='N') { cell.value='N'; cell.fill=fills.night; cell.font=fonts.night; }
+              else if (isWeekend) { cell.fill=fills.weekend; }
+              dayCount++;
+            }
+          }
+          if (person.leaves) {
+            person.leaves.forEach(lv => {
+              if (lv.start.startsWith(String(year))||lv.end.startsWith(String(year))) {
+                let cur=new Date(lv.start+'T12:00:00Z'), end=new Date(lv.end+'T12:00:00Z');
+                while (cur<=end) {
+                  const c=dateToCol[cur.toISOString().slice(0,10)];
+                  if (c) {
+                    const lCell=ws.getCell(rowNum,c);
+                    const isSAP=lv.type==='Applied on SAP';
+                    lCell.value=isSAP?'S':'P'; lCell.fill=isSAP?fills.sap:fills.plan; lCell.font=fonts.black;
+                  }
+                  cur.setDate(cur.getDate()+1);
                 }
-                colIdx += daysInMonth;
+              }
             });
-
-            let rowNum = 5;
-            sortedRoster.forEach(person => {
-                const cycle = shiftCycles[person.crew] || shiftCycles['General'];
-                
-                ws.getCell(rowNum, 1).value = person.empId;
-                ws.getCell(rowNum, 1).alignment = { horizontal: 'center', vertical: 'middle' };
-                ws.getCell(rowNum, 1).border = gridBorder;
-
-                ws.getCell(rowNum, 2).value = person.name;
-                ws.getCell(rowNum, 2).alignment = { vertical: 'middle' };
-                ws.getCell(rowNum, 2).border = gridBorder;
-                ws.getCell(rowNum, 2).font = { bold: true, color: { argb: nameColors[person.color] || 'FF000000' } };
-
-                ws.getCell(rowNum, 3).value = person.crew === 'General' ? 'General' : `Crew ${person.crew}`;
-                ws.getCell(rowNum, 3).alignment = { horizontal: 'center', vertical: 'middle' };
-                ws.getCell(rowNum, 3).border = gridBorder;
-
-                ws.getCell(rowNum, 4).value = person.role;
-                ws.getCell(rowNum, 4).alignment = { horizontal: 'center', vertical: 'middle' };
-                ws.getCell(rowNum, 4).border = gridBorder;
-
-                let dayCount = 0;
-                for (let m = 0; m < 12; m++) {
-                    for (let d = 1; d <= monthDays[m]; d++) {
-                        const dateStr = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                        const diffInDays = getDaysSinceBase(dateStr);
-                        
-                        const shift = cycle[((diffInDays % 8) + 8) % 8]; 
-                        const c = 5 + dayCount;
-                        const cell = ws.getCell(rowNum, c);
-
-                        const currentDate = new Date(dateStr + 'T00:00:00Z');
-                        const isWeekend = currentDate.getUTCDay() === 5 || currentDate.getUTCDay() === 6;
-
-                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                        cell.border = gridBorder;
-
-                        if (shift === 'D') {
-                            cell.value = 'D'; cell.fill = fills.day; cell.font = fonts.day;
-                        } else if (shift === 'N') {
-                            cell.value = 'N'; cell.fill = fills.night; cell.font = fonts.night;
-                        } else if (isWeekend) {
-                            cell.fill = fills.weekend;
-                        }
-                        dayCount++;
-                    }
-                }
-
-                if (person.leaves) {
-                    person.leaves.forEach(lv => {
-                        if (lv.start.startsWith(String(year)) || lv.end.startsWith(String(year))) {
-                            let cur = new Date(lv.start + 'T12:00:00Z');
-                            let end = new Date(lv.end + 'T12:00:00Z');
-
-                            while (cur <= end) {
-                                const c = dateToCol[cur.toISOString().slice(0, 10)];
-                                if (c) {
-                                    const lCell = ws.getCell(rowNum, c);
-                                    const isSAP = lv.type === 'Applied on SAP';
-                                    lCell.value = isSAP ? 'S' : 'P';
-                                    lCell.fill = isSAP ? fills.sap : fills.plan;
-                                    lCell.font = fonts.black;
-                                }
-                                cur.setDate(cur.getDate() + 1);
-                            }
-                        }
-                    });
-                }
-                rowNum++;
-            });
-        }
-
-        buildSheet(2026);
-        buildSheet(2027);
-
-        const outBuffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([outBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'Operations-Master-Roster.xlsx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        showToast('Exported seamlessly!', 'success');
-    } catch (error) {
-        console.error(error);
-        alert("Error: " + error.message);
-    }
+          }
+          rowNum++;
+        });
+      }
+      buildSheet(2026);
+      buildSheet(2027);
+      const outBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([outBuffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Operations-Master-Roster.xlsx';
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      showToast('Exported!', 'success');
+    } catch(error) { console.error(error); alert('Error: '+error.message); }
   }
 
-  // ── INIT APP ON LOAD ───────────────────────
   document.addEventListener('DOMContentLoaded', loadData);
-
 </script>
 </body>
 </html>
